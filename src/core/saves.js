@@ -65,6 +65,7 @@ function loadPlayer(load) {
     const DATA = getPlayerData()
     player = deepNaN(load, DATA)
     player = deepUndefinedAndDecimal(player, DATA)
+    console.log(player)
     convertStringToDecimal()
 }
 
