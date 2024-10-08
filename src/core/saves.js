@@ -213,7 +213,7 @@ export function importy() {
         let keep = player
         try {
             setTimeout(()=>{
-                if (false && findNaN(loadgame, true)) {
+                if (findNaN(loadgame, true)) {
                     addNotify("Error Importing, because it got NaNed")
                     return
                 }
@@ -240,7 +240,7 @@ export function importy_file() {
 				error("Error Importing, because it got NaNed")
 				return
 			}
-            localStorage.setItem(SAVE_ID, loadgame)
+            localStorage.setItem(saveID, loadgame)
 			location.reload()
         }
         fr.readAsText(a.files[0]);
@@ -289,4 +289,25 @@ window.loadGame = () => {
     };
 
     Promise.all(imageUrls.map(loadImage)).then(setupGame).catch(err => console.error(err))
+}
+
+export function isNaNed(val) {
+    return typeof val == "number" ? isNaN(val) : Object.getPrototypeOf(val).constructor.name == "Decimal" ? isNaN(val.mag) : false
+}
+
+export function findNaN(obj, str=false, data=getPlayerData(), node='player') {
+    if (str ? typeof obj == "string" : false) obj = JSON.parse(atob(obj))
+    for (let k in obj) {
+        if (typeof obj[k] == "number") if (isNaNed(obj[k])) return node+'.'+k
+        if (str) {
+            if (typeof obj[k] == "string") if (data[k] == null || data[k] == undefined ? false : Object.getPrototypeOf(data[k]).constructor.name == "Decimal") if (isNaN(E(obj[k]).mag)) return node+'.'+k
+        } else {
+            if (obj[k] == null || obj[k] == undefined ? false : Object.getPrototypeOf(obj[k]).constructor.name == "Decimal") if (isNaN(E(obj[k]).mag)) return node+'.'+k
+        }
+        if (typeof obj[k] == "object") {
+            let node2 = findNaN(obj[k], str, data[k], (node?node+'.':'')+k)
+            if (node2) return node2
+        }
+    }
+    return false
 }
