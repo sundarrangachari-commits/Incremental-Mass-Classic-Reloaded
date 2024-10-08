@@ -6,6 +6,7 @@ import vue2 from '@vitejs/plugin-vue2'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: '/Incremental-Mass-Classic-Reloaded/',
   plugins: [
     vue2(),
     legacy({
