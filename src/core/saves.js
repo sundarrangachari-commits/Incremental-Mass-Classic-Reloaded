@@ -74,7 +74,7 @@ export function clonePlayer(obj,data) {
 
     for (let k in obj) {
         if (data[k] == null || data[k] == undefined) continue
-        unique[k] = Object.getPrototypeOf(data[k]).constructor.name == "Decimal"
+        unique[k] = data[k] instanceof Decimal
         ? E(obj[k])
         : typeof obj[k] == 'object'
         ? clonePlayer(obj[k],data[k])
@@ -87,10 +87,10 @@ export function clonePlayer(obj,data) {
 function deepNaN(obj, data) {
     for (let k in obj) {
         if (typeof obj[k] == 'string') {
-            if (data[k] == null || data[k] == undefined ? false : Object.getPrototypeOf(data[k]).constructor.name == "Decimal") if (isNaN(E(obj[k]).mag)) obj[k] = data[k]
+            if (data[k] == null || data[k] == undefined ? false : data[k] instanceof Decimal ) if (isNaN(E(obj[k]).mag)) obj[k] = data[k];
         } else {
-            if (typeof obj[k] != 'object' && isNaN(obj[k])) obj[k] = data[k]
-            if (typeof obj[k] == 'object' && data[k] && obj[k] != null) obj[k] = deepNaN(obj[k], data[k])
+            if (typeof obj[k] != 'object' && isNaN(obj[k])) obj[k] = data[k];
+            if (typeof obj[k] == 'object' && data[k] && obj[k] != null) obj[k] = deepNaN(obj[k], data[k]);
         }
     }
     return obj
@@ -102,7 +102,7 @@ function deepUndefinedAndDecimal(obj, data) {
         if (obj[k] === null) continue
         if (obj[k] === undefined) obj[k] = data[k]
         else {
-            if (Object.getPrototypeOf(data[k]).constructor.name == "Decimal") obj[k] = E(obj[k])
+            if (data[k] instanceof Decimal) obj[k] = E(obj[k])
             else if (typeof obj[k] == 'object') deepUndefinedAndDecimal(obj[k], data[k])
         }
     }
@@ -301,7 +301,7 @@ export function findNaN(obj, str=false, data=getPlayerData(), node='player') {
     for (let k in obj) {
         if (typeof obj[k] == "number") if (isNaNed(obj[k])) return node+'.'+k
         if (str) {
-            if (typeof obj[k] == "string") if (data[k] == null || data[k] == undefined ? false : Object.getPrototypeOf(data[k]).constructor.name == "Decimal") if (isNaN(E(obj[k]).mag)) return node+'.'+k
+            if (typeof obj[k] == "string") if (data[k] == null || data[k] == undefined ? false : data[k] instanceof Decimal) if (isNaN(E(obj[k]).mag)) return node+'.'+k
         } else {
             if (obj[k] == null || obj[k] == undefined ? false : Object.getPrototypeOf(obj[k]).constructor.name == "Decimal") if (isNaN(E(obj[k]).mag)) return node+'.'+k
         }
