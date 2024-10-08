@@ -1,5 +1,4 @@
 {
-  "name": "incremental-mass-classic-reloaded",
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
