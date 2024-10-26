@@ -23,7 +23,7 @@ export const RESETS = {
                 player.bh.unlocked = true
 
                 giveAchievement(21)
-                if (!UPG_GROUPS.rage.find(x => !['r2','r4'].includes(x) && hasUpgrade(x))) giveAchievement(25);
+                if (!hasNonQoLUpgradesByGroup('rage')) giveAchievement(25);
             }
 
             this.doReset()
@@ -55,9 +55,11 @@ export const RESETS = {
             let k = ['bh5']
             if (player.mlt.times.gte(3)) k.push('bh3');
             if (player.mlt.times.gte(4)) k.push('bh8');
+            if (player.mlt.times.gte(9)) k.push('bh7');
             resetUpgradesByGroup('bh',k)
 
             RESETS["dark-matter"].doReset()
+            resetChallengeLayers(1)
 
             updateTemp()
         },

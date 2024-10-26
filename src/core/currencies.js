@@ -1,4 +1,4 @@
-import { hasUpgrade, simpleUpgradeEffect, upgradeEffect } from "./upgrades";
+import { hasUpgrade, simpleUpgradeBoost, simpleUpgradeEffect, upgradeEffect } from "./upgrades";
 
 export const CURRENCIES = {
     mass: {
@@ -13,8 +13,9 @@ export const CURRENCIES = {
 
             if (hasAchievement(13)) x = x.mul(3);
 
-            x = x.pow(temp.mlt_effect[0]).pow(rankEffect(0,10))
+            x = x.pow(temp.mlt_effect[0]).pow(rankEffect(0,10)).pow(challengeEffect('1-3'))
             if (player.ranks[1].gte(2)) x = x.pow(1.15);
+            if (insideChallenge('1-3')) x = x.pow(.1);
 
             return x
         },
@@ -23,6 +24,7 @@ export const CURRENCIES = {
         name: "Rage Powers",
 
         get require() { return 1e18 },
+        get exponent() { return Decimal.add(hasUpgrade('r8') ? 0.55 : 0.5,challengeEffect('2-3',0)) },
 
         get amount() { return player.rage.powers },
         set amount(v) { player.rage.powers = v.max(0) },
@@ -30,13 +32,14 @@ export const CURRENCIES = {
         get gain() {
             let x = player.mass.div(this.require)
 
-            if (x.lt(1)) return DC.D0;
+            if (x.lt(1) || insideChallenge('2-3')) return DC.D0;
 
-            var exp = hasUpgrade('r8') ? 0.55 : 0.5
+            x = expPow(x,this.exponent).mul(rankEffect(1,3)).mul(rankEffect(0,8)).mul(temp.bh_effect[2]??1)
 
-            x = expPow(x,exp).mul(rankEffect(1,3)).mul(rankEffect(0,8)).mul(temp.bh_effect[2]??1)
-
+            x = x.pow(simpleUpgradeBoost('mlt8',temp.mlt_effect[0])).pow(challengeEffect('1-4'))
+            if (player.ranks[0].gte(350)) x = x.pow(rankEffect(0,10));
             if (hasUpgrade('bh12')) x = x.pow(1.15);
+            if (insideChallenge('1-4')) x = x.pow(.1);
 
             return x
         },
@@ -46,22 +49,28 @@ export const CURRENCIES = {
     'dark-matter': {
         name: "Dark Matter",
 
-        get require() { return 1e18 },
+        get require() { return insideChallenge('2-3') ? 'e324' : 1e18 },
 
         get amount() { return player.bh.dm },
         set amount(v) { player.bh.dm = v.max(0) },
     
         get gain() {
-            let x = player.rage.powers.div(this.require)
+            let x = (insideChallenge('2-3') ? player.mass : player.rage.powers).div(this.require)
 
             if (x.lt(1)) return DC.D0;
 
-            x = expPow(x,0.5).mul(temp.abh_effect[2]??1)
+            let exp = 0.5
+            if (insideChallenge('2-3')) exp = Decimal.mul(exp,CURRENCIES.rage.exponent);
+
+            x = expPow(x,exp).mul(temp.abh_effect[2]??1)
+
+            x = x.pow(challengeEffect('2-4'))
+            if (insideChallenge('2-4')) x = x.pow(.1);
 
             return x
         },
 
-        get passive() { return 0 },
+        get passive() { return +player.mlt.times.gte(9) },
     },
     'black-hole': {
         name: "Black Hole",
@@ -74,6 +83,9 @@ export const CURRENCIES = {
             if (!player.bh.unlocked) return DC.D0;
 
             let x = DC.D1.mul(upgradeEffect('bh1')).mul(temp.bh_effect[1]).mul(temp.abh_effect[0]).mul(simpleUpgradeEffect('r10'))
+
+            x = x.pow(simpleUpgradeBoost('mlt10',temp.mlt_effect[0])).pow(challengeEffect('2-4'))
+            if (insideChallenge('2-4')) x = x.pow(.1);
 
             return x
         },
@@ -90,6 +102,9 @@ export const CURRENCIES = {
 
             let x = DC.D1.mul(temp.abh_effect[1]).mul(simpleUpgradeEffect('bh11')).mul(simpleUpgradeEffect('bh13'))
 
+            x = x.pow(simpleUpgradeBoost('mlt12',temp.mlt_effect[0])).pow(challengeEffect('2-4'))
+            if (insideChallenge('2-4')) x = x.pow(.1);
+            
             return x
         },
     },
@@ -107,7 +122,10 @@ export const CURRENCIES = {
 
             if (!player.mlt.unlocked || m.lt(1)) return DC.D0;
 
-            let x = m.sub(1).pow_base(2).mul(m).mul(upgradeEffect('mlt1')).mul(rankEffect(0,11))
+            let x = m.sub(1).pow_base(m).mul(m)
+            if (m.gte(6)) x = x.pow(2);
+            
+            x = x.mul(upgradeEffect('mlt1')).mul(rankEffect(0,11)).mul(simpleUpgradeEffect('r13')).mul(simpleUpgradeEffect('bh15')).mul(simpleUpgradeEffect('mlt9')).mul(simpleUpgradeEffect('mlt13')).mul(simpleAchievementEffect(43))
 
             return x
         },
@@ -131,7 +149,7 @@ export const TOPBAR_CURRENCIES = {
         },
     },
     rage: {
-        unl: ()=>player.first_ranks[0],
+        unl: ()=>!insideChallenge('2-3') && player.first_ranks[0],
         name: "Rage Powers",
         color: "#f55",
         get display() {
@@ -152,11 +170,12 @@ export const TOPBAR_CURRENCIES = {
         color: "#fe5",
         get display() {
             const curr = CURRENCIES["dark-matter"]
-            var h = format(curr.amount,0) + "<br>" + (CURRENCIES.rage.amount.gte(curr.require) ? getCurrencyGainDisplay('dark-matter') : `(requires <b>${format(curr.require)}</b> RP)`)
+            var h = format(curr.amount,0) + "<br>" + (CURRENCIES.rage.amount.gte(curr.require) ? getCurrencyGainDisplay('dark-matter') : insideChallenge('2-3') ? `(requires <b>${formatMass(CURRENCIES["dark-matter"].require)}</b>)` : `(requires <b>${format(curr.require)}</b> RP)`)
             return h
         },
         get tooltip() {
-            return `<h3>Dark Matter</h3><br class='sub-line'><i>Reach <b>${format(CURRENCIES.rage.require)}</b> rage powers to reset everything the rage does, as well as rage powers and rage upgrades for <b>Dark Matter</b>.</i>`
+            let c = insideChallenge('2-3') ? `<b>${formatMass(CURRENCIES["dark-matter"].require)}</b> of normal mass` : `<b>${format(CURRENCIES["dark-matter"].require)}</b> rage powers`
+            return `<h3>Dark Matter</h3><br class='sub-line'><i>Reach ${c} to reset everything the rage does, as well as rage powers and rage upgrades for <b>Dark Matter</b>.</i>`
         },
         click() {
             doReset('dark-matter')

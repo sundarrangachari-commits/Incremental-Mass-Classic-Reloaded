@@ -12,6 +12,7 @@ export const UPGRADES = {
         bulk: a => a.mul(upgradeEffect('m4')).div(10).log(player.ranks[0].gte(2) ? 1.25 : 1.5).floor().add(1),
 
         get bonus() { return simpleUpgradeEffect('r5',0) },
+        get strength() { return Decimal.add(1,simpleUpgradeEffect('r11',0)).add(rankEffect(2,3)).mul(challengeEffect('1-1')) },
         get base() {
             let b = DC.D1
             if (player.ranks[0].gte(3)) b = b.add(player.upgrades.m1.div(10))
@@ -34,6 +35,7 @@ export const UPGRADES = {
         bulk: a => a.mul(upgradeEffect('m4')).div(100).log(player.ranks[0].gte(3) ? 2 : 3).floor().add(1),
 
         get bonus() { return simpleUpgradeEffect('r5',0) },
+        get strength() { return Decimal.add(1,simpleUpgradeEffect('r11',0)).add(rankEffect(2,3)).mul(challengeEffect('1-1')) },
         get base() {
             let b = DC.D1
             if (player.ranks[0].gte(5)) b = b.add(player.upgrades.m2.div(10))
@@ -54,8 +56,8 @@ export const UPGRADES = {
         cost: a => a.sumBasePO(temp.upg.m3_fp).pow(1.25).pow_base(player.ranks[0].gte(4) ? 6 : 9).mul(1e3).div(upgradeEffect('m4')).max(1),
         bulk: a => a.mul(upgradeEffect('m4')).div(1e3).log(player.ranks[0].gte(4) ? 6 : 9).root(1.25).sumBasePO(temp.upg.m3_fp,true).floor().add(1),
 
-        get bonus() { return Decimal.add(simpleUpgradeEffect('r5',0),simpleUpgradeEffect('mlt2',0)).add(simpleUpgradeEffect('mlt5')) },
-        get strength() { return hasAchievement(16) ? 1.1 : 1 },
+        get bonus() { return Decimal.add(simpleUpgradeEffect('r5',0),simpleUpgradeEffect('mlt2',0)).add(simpleUpgradeEffect('mlt5',0)) },
+        get strength() { return Decimal.add(hasAchievement(16) ? 1.1 : 1,simpleUpgradeEffect('r11',0)).add(rankEffect(2,3)).mul(challengeEffect('1-1')).mul(simpleAchievementEffect(44)) },
         get base() {
             let b = Decimal.add(0.5,simpleUpgradeEffect('r3',0))
             if (player.ranks[0].gte(32)) b = b.add(.1);
@@ -77,8 +79,9 @@ export const UPGRADES = {
         cost: a => a.sumBasePO(hasUpgrade('mlt4')?.00018:.001).pow_base(3).mul(1e3),
         bulk: a => a.div(1e3).log(3).sumBasePO(hasUpgrade('mlt4')?0.00018:.001,true).floor().add(1),
 
+        get strength() { return Decimal.add(1,simpleUpgradeEffect('r11',0)).add(rankEffect(2,3)).mul(challengeEffect('1-1')) },
         get base() {
-            let b = Decimal.add(2,simpleUpgradeEffect('r7',0))
+            let b = Decimal.add(2,simpleUpgradeEffect('r7',0)).mul(simpleUpgradeEffect('r14')).mul(simpleUpgradeEffect('r15'))
             return b
         },
         effect(a) {
@@ -97,9 +100,9 @@ export const UPGRADES = {
         bulk: a => a.mul(simpleAchievementEffect(24)).log(2).sumBase(1.01,true).floor().add(1),
 
         get bonus() { return upgradeEffect('mlt2',0) },
-        get strength() { return rankEffect(2,2) },
+        get strength() { return Decimal.add(rankEffect(2,2),simpleUpgradeEffect('r11',0)).mul(challengeEffect('1-2')) },
         get base() {
-            let b = player.mass.add(10).log10().root(2).mul(rankEffect(1,4)).mul(rankEffect(0,7))
+            let b = player.mass.add(10).log10().root(hasUpgrade('r12') ? 1 : 2).mul(rankEffect(1,4)).mul(rankEffect(0,7))
             return b
         },
         effect(a) {
@@ -109,6 +112,7 @@ export const UPGRADES = {
         effDesc: x => formatMult(x),
     },
     'r2': {
+        qol: true,
         max: 1,
 
         unl: ()=>player.rage.unlocked,
@@ -135,6 +139,7 @@ export const UPGRADES = {
         effDesc: x => "+"+format(x,4),
     },
     'r4': {
+        qol: true,
         max: 1,
 
         unl: ()=>player.rage.unlocked,
@@ -215,6 +220,75 @@ export const UPGRADES = {
         },
         effDesc: x => formatMult(x),
     },
+    'r11': {
+        max: 1,
+
+        unl: ()=>player.mlt.unlocked,
+        get description() { return `The <b>m1-4</b> and <b>r1</b> upgrades are stronger based on your rage powers.` },
+
+        curr: "rage",
+        cost: a => '1e600',
+
+        effect(a) {
+            let x = player.rage.powers.add(10).log10().log10().pow(2).div(25)
+            return x
+        },
+        effDesc: x => "+"+formatPercent(x),
+    },
+    'r12': {
+        max: 1,
+
+        unl: ()=>player.mlt.unlocked,
+        get description() { return `Improve the normal mass boost for the base of <b>r1</b> upgrade.` },
+
+        curr: "rage",
+        cost: a => '1e900',
+    },
+    'r13': {
+        max: 1,
+
+        unl: ()=>player.mlt.unlocked,
+        get description() { return `Rage powers boost multiversal energy generation.` },
+
+        curr: "rage",
+        cost: a => 'e1000',
+
+        effect(a) {
+            let x = player.rage.powers.add(10).log10()
+            return x
+        },
+        effDesc: x => formatMult(x),
+    },
+    'r14': {
+        max: 1,
+
+        unl: ()=>player.mlt.unlocked,
+        get description() { return `The mass of black hole increases the base of <b>m4</b> upgrade.` },
+
+        curr: "rage",
+        cost: a => 'e25000',
+
+        effect(a) {
+            let x = player.bh.mass.add(10).log10().root(3)
+            return x
+        },
+        effDesc: x => formatMult(x),
+    },
+    'r15': {
+        max: 1,
+
+        unl: ()=>player.mlt.unlocked,
+        get description() { return `The mass of anti-black hole increases the base of <b>m4</b> upgrade.` },
+
+        curr: "rage",
+        cost: a => 'e1e6',
+
+        effect(a) {
+            let x = player.bh.anti_mass.add(10).log10().root(2)
+            return x
+        },
+        effDesc: x => formatMult(x),
+    },
 
     ...BH_UPGRADES,
     ...MLT_UPGRADES,
@@ -224,9 +298,9 @@ export const UPG_KEYS = Object.keys(UPGRADES)
 
 export const UPG_GROUPS = {
     'mass': ['m1','m2','m3','m4'],
-    'rage': ['r1','r2','r3','r4','r5','r6','r7','r8','r9','r10'],
-    'bh': ['bh1','bh2','bh3','bh4','bh5','bh6','bh7','bh8','bh9','bh10','bh11','bh12','bh13'],
-    'mlt': ['mlt1','mlt2','mlt3','mlt4','mlt5'],
+    'rage': ['r1','r2','r3','r4','r5','r6','r7','r8','r9','r10','r11','r12','r13','r14','r15'],
+    'bh': ['bh1','bh2','bh3','bh4','bh5','bh6','bh7','bh8','bh9','bh10','bh11','bh12','bh13','bh14','bh15'],
+    'mlt': ['mlt1','mlt2','mlt3','mlt4','mlt5','mlt6','mlt7','mlt8','mlt9','mlt10','mlt11','mlt12','mlt13'],
 }
 
 export const AUTO_UPG_GROUPS = {
@@ -235,11 +309,20 @@ export const AUTO_UPG_GROUPS = {
     'bh': () => player.mlt.times.gte(4),
 }
 
+export const LOCKED_UPG_GROUPS = {
+    'mass': () => insideChallenge('1-2'),
+    'rage': () => insideChallenge('2-2'),
+}
+
 export function hasUpgrade(id,lvl=1) { return player.upgrades[id].gte(lvl) }
 export function upgradeEffect(id,def=1) { return temp.upgrade_effects[id] ?? def }
 export function simpleUpgradeEffect(id,def=1) { return hasUpgrade(id) ? temp.upgrade_effects[id] ?? def : def }
+export function simpleUpgradeBoost(id,boost,def=1) { return hasUpgrade(id) ? boost : def }
+export function getTotalUpgrades(id) { return Decimal.add(player.upgrades[id] ?? 0,temp.bonus_upgrades[id] ?? 0) }
 
 export function buyUpgrade(id,bulk=false,auto=false) {
+    if (temp.locked_upgrades[id]) return;
+
     const u = UPGRADES[id], curr = CURRENCIES[u.curr], max = u.max ?? EINF, lvl = player.upgrades[id];
     bulk &&= max > 1;
     var cost;
@@ -261,16 +344,24 @@ export function resetUpgrades(list=[],keep=[]) {
     for (let id of list) if (!keep.includes(id)) player.upgrades[id] = E(0);
 }
 export function resetUpgradesByGroup(id,keep) { resetUpgrades(UPG_GROUPS[id],keep) }
+export function hasNonQoLUpgradesByGroup(id) { return UPG_GROUPS[id].some(x => !UPGRADES[x].qol && hasUpgrade(x)) }
 
 createTempUpdate("updateUpgradesTemp", ()=>{
     temp.auto_upgs_unlocked = {}
+    temp.locked_upgrades = {}
 
-    for (let group_id in AUTO_UPG_GROUPS) if (AUTO_UPG_GROUPS[group_id]()) for (let id of UPG_GROUPS[group_id]) temp.auto_upgs_unlocked[id] = true;
+    for (let group_id in UPG_GROUPS) {
+        var auto = AUTO_UPG_GROUPS[group_id]?.(), locked = LOCKED_UPG_GROUPS[group_id]?.();
+        for (let id of UPG_GROUPS[group_id]) {
+            if (auto) temp.auto_upgs_unlocked[id] = true;
+            if (locked) temp.locked_upgrades[id] = true;
+        }
+    }
 
     temp.upg.m3_fp = Decimal.mul(player.ranks[1].gte(3) ? .05 : .1, simpleUpgradeEffect('mlt3'))
 
     for (let [id,u] of Object.entries(UPGRADES)) {
-        var level = player.upgrades[id].add(u.bonus ?? 0).mul(u.strength ?? 1);
+        var level = player.upgrades[id].add(temp.bonus_upgrades[id] = u.bonus ?? 0).mul(u.strength ?? 1);
 
         if (!u.unl()) level = E(0);
 

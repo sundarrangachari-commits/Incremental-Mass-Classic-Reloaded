@@ -15,6 +15,18 @@ function calc(dt) {
 
     for (let id of UPG_KEYS) if (UPGRADES[id].unl() && temp.auto_upgs_unlocked[id] && player.auto_upgs[id]) buyUpgrade(id,true,true);
 
+    for (let id in CHALLENGES) {
+        const C = CHALLENGES[id]
+        var trapped = temp.trapped_chal[id]
+
+        if (trapped) {
+            var amount = CHAL_RESOURCES[C.res].amount
+            if (amount.gte(C.goal(DC.D0))) {
+                player.chal.completions[id] = C.bulk(amount).min(player.chal.best[id]);
+            }
+        }
+    }
+
     player.time += dt
 
     checkAchievements()

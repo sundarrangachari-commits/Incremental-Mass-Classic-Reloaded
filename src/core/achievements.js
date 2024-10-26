@@ -1,3 +1,5 @@
+import { formatMult } from "./format"
+
 export const ACHIEVEMENTS = {
     11: {
         title: `One must imagine Sisyphus happy`,
@@ -26,7 +28,7 @@ export const ACHIEVEMENTS = {
     },
     16: {
         title: `No softcaps? It wasn’t a good idea`,
-        get description() { return `Get over <b>^10</b> of the third mass upgrade’s effect.` },
+        get description() { return `Get <b>${formatPow(10)}</b> of the third mass upgrade’s effect.` },
         get reward() { return `The third mass upgrade is <b>10%</b> stronger.` },
         condition: ()=>Decimal.gte(upgradeEffect('m3'),10),
     },
@@ -97,6 +99,81 @@ export const ACHIEVEMENTS = {
         effect: [()=>1.1],
         condition: ()=>player.bh.anti_mass.gte(1.5e56),
     },
+
+    41: {
+        title: `Imagine Newton slept under a coconut tree`,
+        get description() { return `Reach multiverse <b>#6</b>.` },
+        condition: ()=>player.mlt.times.gte(6),
+    },
+    42: {
+        title: `Oof-O-Meter`,
+        get description() { return `Get <b>${formatPercent(10)}</b> of the <b>r1</b> upgrade’s strength.` },
+        condition: ()=>UPGRADES.r1.strength.gte(10),
+    },
+    43: {
+        title: `Waiting Simulator`,
+        get description() { return `Play the game for <b>6 hours</b>.` },
+        condition: ()=>player.time>=21600,
+        get reward() { return `Total time played gains a multiplier of multiversal energy generation at a logarithmic rate.` },
+        effect: [()=>Decimal.log10(player.time+1),formatMult],
+    },
+    44: {
+        title: `I told you never be ballin’`,
+        get description() { return `Complete any Challenge at the first time.` },
+        get reward() { return `The third mass upgrade is stronger based on total challenge completions.` },
+        effect: [()=>{
+            let x = DC.D1
+            for (let id in CHALLENGES) x = x.mul(player.chal.completions[id].add(1).log(10).div(60).add(1))
+            return x
+        },x=>formatPercent(x.sub(1))+' stronger'],
+    },
+    45: {
+        title: `No rage upgrade would be better`,
+        get description() { return `Reach <b>${formatMass('1.5e100056')}</b> uni of normal mass without purchasing <b>r1</b> upgrade inside the <b>β</b> challenge.` },
+        condition: ()=>insideChallenge('1-2') && !hasUpgrade('r1') && player.mass.gte('1.5e100056'),
+    },
+    46: {
+        title: `IT’S OVER 9000`,
+        get description() { return `Get <b>${formatPow(9000)}</b> of the third mass upgrade’s effect.` },
+        condition: ()=>Decimal.gte(upgradeEffect('m3'),9000),
+    },
+    
+    51: {
+        title: `Stop treating me about inflation`,
+        get description() { return `Reach <b>${formatMass('1.5e1000056')}</b> of normal mass.` },
+        condition: ()=>player.mass.gte('1.5e1000056'),
+    },
+    52: {
+        title: `There is always old generation`,
+        get description() { return `Reach multiverse <b>#12</b>.` },
+        condition: ()=>player.mlt.times.gte(12),
+    },
+    53: {
+        title: `“I'm having diet without upgrades”`,
+        get description() { return `Exit the <b>ε</b> challenge, reaching <b>${formatMass('1.5e4056')}</b> of normal mass without purchasing mass and non-QoL rage & black hole upgrades.` },
+        get reward() { return `The <b>mlt1-2</b> upgrades are <b>10%</b> stronger.` },
+        effect: [()=>1.1],
+    },
+    54: {
+        title: `Supermassive Black Hole`,
+        get description() { return `Reach <b>${formatMass('1.5e1000056')}</b> of the black hole.` },
+        condition: ()=>player.bh.mass.gte('1.5e1000056'),
+    },
+    55: {
+        title: `Bruh, what are you doing here?`,
+        get description() { return `Enter a challenge that gets trapped by active challenge.` },
+    },
+    56: {
+        title: `The Completionist`,
+        get description() { return `Get <b>${format(1e3,0)}</b> of total challenge completions.` },
+        get reward() { return `L1 & L2 challenges are <b>1%</b> stronger.` },
+        effect: [()=>1.01],
+        condition: ()=>{
+            let x = DC.D0
+            for (let id in CHALLENGES) x = x.add(player.chal.completions[id]);
+            return x.gte(1e3)
+        },
+    },
 }
 
 export const ACHIEVEMENTS_KEYS = Object.keys(ACHIEVEMENTS).map(x=>parseInt(x))
@@ -135,7 +212,7 @@ export function hasAchievement(id) { return player.achievements.includes(id) }
 export function simpleAchievementEffect(id,def=1) { return hasAchievement(id) ? temp.achievement_effects[id] ?? def : def }
 
 createTempUpdate("updateAchievementsTemp", ()=>{
-    for (let [id,a] of Object.entries(ACHIEVEMENTS)) {
+    for (let [id,a] of Object.entries(ACHIEVEMENTS)) if (a) {
         id = parseInt(id)
         if ('effect' in a) temp.achievement_effects[id] = a.effect[0]();
     }

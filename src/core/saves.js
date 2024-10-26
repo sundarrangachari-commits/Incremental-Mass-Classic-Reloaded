@@ -37,6 +37,12 @@ export function getPlayerData() {
             total_energy: DC.D0,
         },
 
+        chal: {
+            active: {},
+            completions: {},
+            best: {},
+        },
+
         achievements: [],
 
         options: {
@@ -49,6 +55,11 @@ export function getPlayerData() {
     }
     for (let k in UPGRADES) s.upgrades[k] = DC.D0;
     for (let i = 0; i < RANKS_LEN; i++) s.ranks[i] = DC.D0;
+    for (let i in CHALLENGES) {
+        s.chal.active[i] = false
+        s.chal.completions[i] = DC.D0
+        s.chal.best[i] = DC.D0
+    }
     return s
 }
 
@@ -267,6 +278,17 @@ function setupGame() {
 
     let stab = TabSystem[Tab.tab].stab
     app.view.subtab = Array.isArray(stab) ? stab[Tab.subtab[Tab.tab]??0][0] : stab
+
+    for (let id in CHALLENGES) {
+        const C = CHALLENGES[id]
+
+        if (!('unl' in C)) C.unl = ()=>true;
+
+        if (!('goal' in C)) C.goal = ()=>EINF;
+        if (!('bulk' in C)) C.bulk = ()=>DC.D0;
+
+        C.res ??= 'placeholder'
+    }
 
     setInterval(loop, 1000/FPS);
 

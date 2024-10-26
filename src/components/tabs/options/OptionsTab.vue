@@ -62,7 +62,7 @@ export default {
                 </select>
             </button>
         </div><div style="margin: 10px 0;">
-            <p>Incremental Mass: Classic Reloaded - v1.0 - Made by MrRedShark77</p>
+            <p>Incremental Mass: Classic Reloaded - v1.1 - Made by MrRedShark77</p>
         </div>
     </div>
 </template>

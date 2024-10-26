@@ -150,6 +150,7 @@ export const DC = {
     E1: E(10),
     E10: E(1e10),
     MAX_VALUE: E(Number.MAX_VALUE),
+    LOG10_MAX_VALUE: Decimal.log10(Number.MAX_VALUE),
 }
 
 /**

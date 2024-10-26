@@ -11,6 +11,7 @@ export * from "@/core/currencies";
 export * from "@/core/resets";
 export * from "@/core/ranks";
 export * from "@/core/black-hole";
+export * from "@/core/challenges";
 
 export * from "@/core/mlt/multiverse.js";
 

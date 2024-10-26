@@ -14,6 +14,7 @@ export default {
             effDesc: undefined,
             isAutoUnlocked: false,
             auto: false,
+            locked: false,
 
             currency: DC.D0,
             suffix: "",
@@ -28,7 +29,7 @@ export default {
     computed: {
         classObject() {
             return {
-                "o-primary-btn--disabled": this.level.lt(this.max) && this.currency.lt(this.cost),
+                "o-primary-btn--disabled": this.level.lt(this.max) && (this.locked || this.currency.lt(this.cost)),
                 "o-primary-btn--bought": this.level.gte(this.max),
             };
         },
@@ -41,7 +42,7 @@ export default {
             return h
         },
         get_cost() {
-            return "Cost: " + (this.mass?formatMass:format)(this.cost) + " " + this.suffix;
+            return this.locked ? `Locked` : "Cost: " + (this.mass?formatMass:format)(this.cost) + " " + this.suffix;
         },
     },
     methods: {
@@ -59,11 +60,12 @@ export default {
             this.mass = u.mass;
             this.level = player.upgrades[this.id];
             this.max = u.max ?? EINF;
-            this.bonus = u.bonus ?? 0;
+            this.bonus = temp.bonus_upgrades[this.id] ?? 0; // u.bonus ?? 0;
             this.strength = u.strength ?? 1;
             this.description = u.description;
             this.cost = u.cost(this.level);
             this.auto = player.auto_upgs[this.id];
+            this.locked = temp.locked_upgrades[this.id];
             this.isAutoUnlocked = temp.auto_upgs_unlocked[this.id];
 
             this.effDesc = u.effDesc?.(temp.upgrade_effects[this.id]);

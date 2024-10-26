@@ -7,10 +7,10 @@ export const RANKS = [
         unl: () => true,
         auto: () => player.first_ranks[1],
 
-        get fp() { return simpleAchievementEffect(34) },
+        get fp() { return Decimal.mul(simpleAchievementEffect(34),temp.ranks_fp).mul(challengeEffect('2-1')) },
 
-        require(a) { return a.div(this.fp).sumBase(1.01).pow(1.5).add(1).pow_base(player.ranks[1].gte(1) ? 8 : 10).div(hasUpgrade('r9')?upgradeEffect('m4'):1).max(1) },
-        bulk(a) { return a.mul(hasUpgrade('r9')?upgradeEffect('m4'):1).log(player.ranks[1].gte(1) ? 8 : 10).sub(1).root(1.5).sumBase(1.01,true).mul(this.fp).floor().add(1) },
+        require(a) { return insideChallenge('2-1') ? EINF : a.div(this.fp).sumBase(1.01).pow(1.5).add(1).pow_base(player.ranks[1].gte(1) ? 8 : 10).div(hasUpgrade('r9')?upgradeEffect('m4'):1).max(1) },
+        bulk(a) { return insideChallenge('2-1') ? DC.D0 : a.mul(hasUpgrade('r9')?upgradeEffect('m4'):1).log(player.ranks[1].gte(1) ? 8 : 10).sub(1).root(1.5).sumBase(1.01,true).mul(this.fp).floor().add(1) },
 
         rewards: {
             "1": [
@@ -47,12 +47,15 @@ export const RANKS = [
                 `<b>Tier 7</b> affects the <b>Rank 57</b>'s effect.`,
             ],
             "150": [ // 10
-                `The exponent of the normal mass is increased by <b>+1%</b> per <b>Rank</b><sup>0.75</sup>, starting at 200.`,
-                ()=>player.ranks[0].sub(149).max(0).pow(0.75).mul(.01).add(1), 1, x=>formatPow(x),
+                `The exponent of the normal mass is increased by <b>+1%</b> per <b>Rank</b><sup>0.75</sup>, starting at 150.`,
+                ()=>player.ranks[0].sub(149).max(0).pow(0.75).mul(.01).add(1), 1, x=>formatPow(x,4),
             ],
             "230": [
                 `Increase multiversal energy generation by <b>+10%</b> compounding per <b>Rank</b><sup>0.75</sup>.`,
                 ()=>player.ranks[0].max(0).pow(0.75).pow_base(1.1), 1, x=>formatMult(x),
+            ],
+            "350": [
+                `<b>Rank 150</b> affects rage powers.`,
             ],
         },
     },{
@@ -60,8 +63,10 @@ export const RANKS = [
         unl: () => player.first_ranks[0],
         auto: () => hasUpgrade('r4'),
 
-        require: a => a.add(2).pow(player.ranks[2].gte(1) ? 1.8 : 2).round(),
-        bulk: a => a.root(player.ranks[2].gte(1) ? 1.8 : 2).sub(1).floor(),
+        get fp() { return temp.ranks_fp },
+        
+        require(a) { return a.div(this.fp).add(2).pow(player.ranks[2].gte(1) ? 1.8 : 2).round() },
+        bulk(a) { return a.root(player.ranks[2].gte(1) ? 1.8 : 2).sub(2).mul(this.fp).add(1).floor() },
 
         rewards: {
             "1": [
@@ -97,8 +102,10 @@ export const RANKS = [
         unl: () => player.mlt.times.gte(2),
         auto: () => player.mlt.times.gte(3),
 
-        require: a => a.add(4).pow(1.6).round(),
-        bulk: a => a.root(1.6).sub(3).floor(),
+        get fp() { return temp.ranks_fp },
+
+        require(a) { return a.div(this.fp).add(4).pow(1.6).round() },
+        bulk(a) { return a.root(1.6).sub(4).mul(this.fp).add(1).floor() },
 
         rewards: {
             "1": [
@@ -110,6 +117,10 @@ export const RANKS = [
             "3": [
                 `The <b>r1</b> upgrade is <b>15%</b> stronger.`,
                 ()=>1.15,1
+            ],
+            "5": [
+                `The <b>m1-4</b> upgrades are <b>+5%</b> stronger per <b>Tetr</b> additively.`,
+                ()=>player.ranks[2].div(20),DC.D0,x=>"+"+formatPercent(x)
             ],
         },
     },
@@ -140,6 +151,8 @@ export function rankUp(id) {
 export function rankEffect(id,i,def=1) { return temp.rank_effects[id][i] ?? def }
 
 createTempUpdate('updateRanksTemp', ()=>{
+    temp.ranks_fp = insideChallenge('1-1') ? 1/3 : 1
+
     for (let i = 0; i < RANKS_LEN; i++) {
         const R = RANKS[i], amount = R.amount, TR = temp.rank_effects[i], RRK = Object.keys(R.rewards);
 

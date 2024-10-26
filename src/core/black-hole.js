@@ -1,15 +1,18 @@
+import { hasUpgrade, simpleUpgradeEffect } from "./upgrades"
+
 export const BH_UPGRADES = {
     'bh1': {
         unl: ()=>player.bh.unlocked,
         get description() { return `Increase mass of black hole by <b>${formatMult(this.base)}</b> per level.` },
 
         curr: "dark-matter",
-        cost: a => a.sumBase(1.01).pow_base(2).mul(1),
-        bulk: a => a.div(1).log(2).sumBase(1.01,true).floor().add(1),
+        cost: a => a.sumBase(1.01).pow_base(2).div(simpleUpgradeBoost('mlt6',simpleAchievementEffect(24))),
+        bulk: a => a.mul(simpleUpgradeBoost('mlt6',simpleAchievementEffect(24))).log(2).sumBase(1.01,true).floor().add(1),
 
         get bonus() { return upgradeEffect('mlt2',0) },
+        get strength() { return Decimal.mul(simpleUpgradeEffect('mlt7'),challengeEffect('2-2')) },
         get base() {
-            let b = Decimal.mul(3,simpleUpgradeEffect('bh4'))
+            let b = Decimal.mul(3,simpleUpgradeEffect('bh4')).mul(simpleUpgradeEffect('bh14'))
             return b
         },
         effect(a) {
@@ -23,8 +26,8 @@ export const BH_UPGRADES = {
         get description() { return `Increase the exponent of the second effect of black hole by <b>+${formatPercent(this.base)}</b> per level.` },
 
         curr: "dark-matter",
-        cost: a => a.sumBase(1.05).pow_base(10).mul(1),
-        bulk: a => a.div(1).log(10).sumBase(1.05,true).floor().add(1),
+        cost: a => a.sumBase(1.05).pow_base(10).div(simpleUpgradeBoost('mlt6',simpleAchievementEffect(24))),
+        bulk: a => a.mul(simpleUpgradeBoost('mlt6',simpleAchievementEffect(24))).log(10).sumBase(1.05,true).floor().add(1),
 
         get bonus() { return upgradeEffect('mlt2',0) },
         get base() {
@@ -38,6 +41,7 @@ export const BH_UPGRADES = {
         effDesc: x => formatPow(x),
     },
     'bh3': {
+        qol: true,
         max: 1,
 
         unl: ()=>player.bh.unlocked,
@@ -56,12 +60,13 @@ export const BH_UPGRADES = {
         cost: a => 100,
 
         effect(a) {
-            let x = player.mass.add(10).log10().log10().add(1)
+            let x = hasUpgrade('bh14') ? expPow(player.mass.add(10).log10(),0.5).pow(2) : player.mass.add(10).log10().log10().add(1)
             return x
         },
         effDesc: x => formatMult(x),
     },
     'bh5': {
+        qol: true,
         max: 1,
 
         unl: ()=>player.bh.unlocked,
@@ -80,6 +85,7 @@ export const BH_UPGRADES = {
         cost: a => 1e4,
     },
     'bh7': {
+        qol: true,
         max: 1,
 
         unl: ()=>player.bh.unlocked,
@@ -89,6 +95,7 @@ export const BH_UPGRADES = {
         cost: a => 1e5,
     },
     'bh8': {
+        qol: true,
         max: 1,
 
         unl: ()=>player.bh.unlocked,
@@ -107,7 +114,7 @@ export const BH_UPGRADES = {
         max: 1,
 
         unl: ()=>player.bh.unlocked,
-        get description() { return `The mass of anti-black hone increases the base of <b>bh2</b> upgrade at a reduced rate.` },
+        get description() { return `The mass of anti-black hole increases the base of <b>bh2</b> upgrade at a reduced rate.` },
 
         curr: "dark-matter",
         cost: a => 1e7,
@@ -162,6 +169,36 @@ export const BH_UPGRADES = {
 
         effect(a) {
             let x = expPow(upgradeEffect('bh1'),1/2)
+            return x
+        },
+        effDesc: x => formatMult(x),
+    },
+    'bh14': {
+        max: 1,
+
+        unl: ()=>player.mlt.unlocked,
+        get description() { return `The mass of black hole increases the base of <b>bh1</b> upgrade at a reduced rate. Improve the <b>bh4</b> upgrade.` },
+
+        curr: "dark-matter",
+        cost: a => 1e69,
+
+        effect(a) {
+            let x = expPow(player.bh.mass.add(10).log10(),0.5).pow(2)
+            return x
+        },
+        effDesc: x => formatMult(x),
+    },
+    'bh15': {
+        max: 1,
+
+        unl: ()=>player.mlt.unlocked,
+        get description() { return `Dark matter boosts multiversal energy generation.` },
+
+        curr: "dark-matter",
+        cost: a => 1e200,
+
+        effect(a) {
+            let x = player.bh.dm.add(10).log10().pow(2)
             return x
         },
         effDesc: x => formatMult(x),
