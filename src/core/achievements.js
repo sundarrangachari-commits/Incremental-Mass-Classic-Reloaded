@@ -112,8 +112,8 @@ export const ACHIEVEMENTS = {
     },
     43: {
         title: `Waiting Simulator`,
-        get description() { return `Play the game for <b>6 hours</b>.` },
-        condition: ()=>player.time>=21600,
+        get description() { return `Play the game for <b>2 hours</b>.` },
+        condition: ()=>player.time>=7200,
         get reward() { return `Total time played gains a multiplier of multiversal energy generation at a logarithmic rate.` },
         effect: [()=>Decimal.log10(player.time+1),formatMult],
     },
@@ -129,7 +129,7 @@ export const ACHIEVEMENTS = {
     },
     45: {
         title: `No rage upgrade would be better`,
-        get description() { return `Reach <b>${formatMass('1.5e100056')}</b> uni of normal mass without purchasing <b>r1</b> upgrade inside the <b>β</b> challenge.` },
+        get description() { return `Reach <b>${formatMass('1.5e100056')}</b> of normal mass without purchasing <b>r1</b> upgrade inside the <b>β</b> challenge.` },
         condition: ()=>insideChallenge('1-2') && !hasUpgrade('r1') && player.mass.gte('1.5e100056'),
     },
     46: {

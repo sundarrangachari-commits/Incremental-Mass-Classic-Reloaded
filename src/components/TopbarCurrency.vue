@@ -95,7 +95,7 @@ export default {
     position: absolute;
     left: 3px;
     top: 50%;
-    transform: translateY(-50%);
+    transform: translateY(-50%) translateY(0.00001px);
     width: calc(100% - 6px);
     text-align: left;
     font-size: 12px;
