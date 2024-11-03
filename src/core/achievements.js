@@ -192,7 +192,7 @@ export const ACHIEVEMENTS = {
         condition: ()=>player.bh.mass.gte(mlt(1)),
     },
     64: {
-        title: `Are you getting many medals?`,
+        title: `Are you getting more medals?`,
         get description() { return `Reach <b>Rank ${format(1e5,0)}</b>.` },
         condition: ()=>player.ranks[0].gte(1e5),
     },
