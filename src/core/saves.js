@@ -35,6 +35,10 @@ export function getPlayerData() {
 
             energy: DC.D0,
             total_energy: DC.D0,
+
+            broken: false,
+            fragments: DC.D0,
+            total_fragments: DC.D0,
         },
 
         chal: {

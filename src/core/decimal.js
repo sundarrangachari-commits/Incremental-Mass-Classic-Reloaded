@@ -1,5 +1,4 @@
 export const E = x => new Decimal(x);
-
 export const EINF = Decimal.dInf
 
 export function sumBase(x,a) {
@@ -62,7 +61,7 @@ Decimal.prototype.softcap = function (start, power, mode, dis=false) {
 Decimal.prototype.scale = function (s, p, mode, rev=false) {
     var x = this.clone()
 
-    if (Decimal.lte(x,s)) return x
+    if (Decimal.lt(x,s)) return x
 
     switch (mode) {
         case 'L':
@@ -91,6 +90,9 @@ Decimal.prototype.scale = function (s, p, mode, rev=false) {
             // 10^((lg(x)/s)^p*s)
             let s10 = Decimal.log10(s)
             return rev ? Decimal.pow(10,x.log10().div(s10).root(p).mul(s10)) : Decimal.pow(10,x.log10().div(s10).pow(p).mul(s10))
+        }
+        case 'DA': { // Addition Delay
+            return rev ? x.sub(p).max(s) : x.add(p)
         }
         default: {
             return x

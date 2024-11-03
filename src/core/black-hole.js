@@ -1,4 +1,4 @@
-import { hasUpgrade, simpleUpgradeEffect } from "./upgrades"
+import { hasUpgrade, simpleUpgradeBoost, simpleUpgradeEffect, upgradeEffect } from "./upgrades"
 
 export const BH_UPGRADES = {
     'bh1': {
@@ -10,7 +10,7 @@ export const BH_UPGRADES = {
         bulk: a => a.mul(simpleUpgradeBoost('mlt6',simpleAchievementEffect(24))).log(2).sumBase(1.01,true).floor().add(1),
 
         get bonus() { return upgradeEffect('mlt2',0) },
-        get strength() { return Decimal.mul(simpleUpgradeEffect('mlt7'),challengeEffect('2-2')) },
+        get strength() { return insideChallenge('3-5') ? 0.01 : Decimal.mul(simpleUpgradeEffect('mlt7'),challengeEffect('2-2')).mul(upgradeEffect('bmlt2')) },
         get base() {
             let b = Decimal.mul(3,simpleUpgradeEffect('bh4')).mul(simpleUpgradeEffect('bh14'))
             return b
@@ -30,6 +30,7 @@ export const BH_UPGRADES = {
         bulk: a => a.mul(simpleUpgradeBoost('mlt6',simpleAchievementEffect(24))).log(10).sumBase(1.05,true).floor().add(1),
 
         get bonus() { return upgradeEffect('mlt2',0) },
+        get strength() { return insideChallenge('3-5') ? 0.01 : Decimal.mul(upgradeEffect('bmlt2'),challengeEffect('3-3')) },
         get base() {
             let b = Decimal.add(0.5,simpleUpgradeEffect('bh9',0))
             return b
@@ -221,8 +222,8 @@ function getBHEffect() {
     var bh = player.bh.mass
 
     var a = [
-        bh.root(hasUpgrade('bh6') ? 2 : 4).mul(10).add(1).pow(simpleAchievementEffect(26)),
-        expPow(bh.add(1), 0.5).pow(upgradeEffect('bh2')).pow(simpleAchievementEffect(26)),
+        bh.root(hasUpgrade('bh6') ? 2 : 4).mul(10).add(1).pow(simpleAchievementEffect(26)).pow(simpleUpgradeEffect('bmlt5')),
+        expPow(bh.add(1), Decimal.add(0.5,challengeEffect('3-4',0))).pow(upgradeEffect('bh2')).pow(simpleAchievementEffect(26)),
     ]
 
     if (hasUpgrade('bh6')) a[2] = expPow(bh.add(1), 0.4).pow(simpleUpgradeEffect('bh8')).pow(simpleAchievementEffect(26));
@@ -234,8 +235,8 @@ function getABHEffect() {
     var bh = player.bh.anti_mass
 
     var a = [
-        bh.root(2).mul(10).add(1).pow(simpleAchievementEffect(36)),
-        expPow(bh.add(1), 0.5).pow(simpleUpgradeEffect('bh8')).pow(simpleAchievementEffect(36)),
+        bh.root(2).mul(10).add(1).pow(simpleAchievementEffect(36)).pow(simpleUpgradeBoost('bmlt8',upgradeEffect('bh2'))),
+        expPow(bh.add(1), Decimal.add(0.5,challengeEffect('3-4',0))).pow(simpleUpgradeEffect('bh8')).pow(simpleAchievementEffect(36)),
     ]
 
     if (hasUpgrade('bh11')) a[2] = expPow(bh.add(1), 0.4).pow(player.mlt.times.gte(4) ? simpleUpgradeEffect('bh8') : 1).pow(simpleAchievementEffect(36));

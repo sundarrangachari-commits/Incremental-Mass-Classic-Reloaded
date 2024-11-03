@@ -49,7 +49,7 @@ export const RESETS = {
 
             this.doReset()
         },
-        doReset() {
+        doReset(chal) {
             player.bh.dm = E(0)
 
             let k = ['bh5']
@@ -59,7 +59,7 @@ export const RESETS = {
             resetUpgradesByGroup('bh',k)
 
             RESETS["dark-matter"].doReset()
-            resetChallengeLayers(1)
+            if (chal || !SET_BEST_CHAL[1]()) resetChallengeLayers(1);
 
             updateTemp()
         },

@@ -9,8 +9,8 @@ export const RANKS = [
 
         get fp() { return Decimal.mul(simpleAchievementEffect(34),temp.ranks_fp).mul(challengeEffect('2-1')) },
 
-        require(a) { return insideChallenge('2-1') ? EINF : a.div(this.fp).sumBase(1.01).pow(1.5).add(1).pow_base(player.ranks[1].gte(1) ? 8 : 10).div(hasUpgrade('r9')?upgradeEffect('m4'):1).max(1) },
-        bulk(a) { return insideChallenge('2-1') ? DC.D0 : a.mul(hasUpgrade('r9')?upgradeEffect('m4'):1).log(player.ranks[1].gte(1) ? 8 : 10).sub(1).root(1.5).sumBase(1.01,true).mul(this.fp).floor().add(1) },
+        require(a) { return insideChallenge('2-1') ? EINF : a.div(this.fp).sumBase(1.01).pow(1.5).add(1).pow_base(player.ranks[1].gte(1) ? 8 : 10).div(hasUpgrade('r9')?upgradeEffect('m4'):1).max(1).root(player.ranks[3].gte(2) ? upgradeEffect('m5') : 1) },
+        bulk(a) { return insideChallenge('2-1') ? DC.D0 : a.pow(player.ranks[3].gte(2) ? upgradeEffect('m5') : 1).mul(hasUpgrade('r9')?upgradeEffect('m4'):1).log(player.ranks[1].gte(1) ? 8 : 10).sub(1).root(1.5).sumBase(1.01,true).mul(this.fp).floor().add(1) },
 
         rewards: {
             "1": [
@@ -121,6 +121,30 @@ export const RANKS = [
             "5": [
                 `The <b>m1-4</b> upgrades are <b>+5%</b> stronger per <b>Tetr</b> additively.`,
                 ()=>player.ranks[2].div(20),DC.D0,x=>"+"+formatPercent(x)
+            ],
+        },
+    },{
+        name: "Pent",
+        unl: () => player.mlt.times.gte(20),
+        auto: () => player.mlt.times.gte(20),
+
+        get fp() { return temp.ranks_fp },
+
+        require(a) { return a.div(this.fp).add(5).pow(1.7).round() },
+        bulk(a) { return a.root(1.7).sub(5).mul(this.fp).add(1).floor() },
+
+        rewards: {
+            "1": [
+                `Unlock the fifth mass upgrade.`
+            ],
+            "2": [
+                `The fifth mass upgrade affects the <b>Rank</b> requirement normally.`
+            ],
+            "3": [
+                `<b>x10</b> to the base of the third mass upgrade. The fifth mass upgrade affects the <b>r1</b> upgrade.`
+            ],
+            "5": [
+                `Unlock the sixth mass upgrade.`
             ],
         },
     },

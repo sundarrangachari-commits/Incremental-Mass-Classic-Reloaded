@@ -39,7 +39,7 @@ export const CHALLENGES = {
         goal: a => a.pow_base(1.02).mul(25000).pow10().mul(1.5e56),
         bulk: a => a.div(1.5e56).log10().div(25000).log(1.02).add(1).floor(),
 
-        get strength() { return Decimal.mul(challengeEffect('2-5'),simpleAchievementEffect(56)) },
+        get strength() { return Decimal.mul(challengeEffect('2-5'),simpleAchievementEffect(56)).mul(simpleUpgradeBoost('bmlt4',temp.break_mlt_effect[0])).mul(challengeEffect('3-6')) },
         effect(c) {
             let x = c.mul(.01).add(1)
             return x
@@ -57,7 +57,7 @@ export const CHALLENGES = {
         goal: a => a.pow_base(1.02).mul(25000).pow10().mul(1.5e56),
         bulk: a => a.div(1.5e56).log10().div(25000).log(1.02).add(1).floor(),
 
-        get strength() { return Decimal.mul(challengeEffect('2-5'),simpleAchievementEffect(56)) },
+        get strength() { return Decimal.mul(challengeEffect('2-5'),simpleAchievementEffect(56)).mul(simpleUpgradeBoost('bmlt4',temp.break_mlt_effect[0])).mul(challengeEffect('3-6')) },
         effect(c) {
             let x = c.mul(.01).add(1).pow(2)
             return x
@@ -75,7 +75,7 @@ export const CHALLENGES = {
         goal: a => a.pow_base(1.05).mul(4000).pow10().mul(1.5e56),
         bulk: a => a.div(1.5e56).log10().div(4000).log(1.05).add(1).floor(),
 
-        get strength() { return Decimal.mul(challengeEffect('2-5'),simpleAchievementEffect(56)) },
+        get strength() { return Decimal.mul(challengeEffect('2-5'),simpleAchievementEffect(56)).mul(simpleUpgradeBoost('bmlt4',temp.break_mlt_effect[0])).mul(challengeEffect('3-6')) },
         effect(c) {
             let x = c.div(50).add(1).root(2)
             return x
@@ -93,7 +93,7 @@ export const CHALLENGES = {
         goal: a => a.pow_base(1.05).mul(40000).pow10().mul(1.5e56),
         bulk: a => a.div(1.5e56).log10().div(40000).log(1.05).add(1).floor(),
 
-        get strength() { return Decimal.mul(challengeEffect('2-5'),simpleAchievementEffect(56)) },
+        get strength() { return Decimal.mul(challengeEffect('2-5'),simpleAchievementEffect(56)).mul(simpleUpgradeBoost('bmlt4',temp.break_mlt_effect[0])).mul(challengeEffect('3-6')) },
         effect(c) {
             let x = c.div(50).add(1).root(2)
             return x
@@ -112,7 +112,7 @@ export const CHALLENGES = {
         goal: a => a.pow_base(1.1).mul(1e5).pow10().mul(1.5e56),
         bulk: a => a.div(1.5e56).log10().div(1e5).log(1.1).add(1).floor(),
 
-        get strength() { return simpleAchievementEffect(56) },
+        get strength() { return Decimal.mul(challengeEffect('3-6'),simpleAchievementEffect(56)) },
         effect(c) {
             let x = c.div(5).add(1).root(2)
             return x
@@ -130,7 +130,7 @@ export const CHALLENGES = {
         goal: a => a.pow_base(1.05).mul(5e5).pow10().mul(1.5e56),
         bulk: a => a.div(1.5e56).log10().div(5e5).log(1.05).add(1).floor(),
 
-        get strength() { return simpleAchievementEffect(56) },
+        get strength() { return Decimal.mul(challengeEffect('3-6'),simpleAchievementEffect(56)) },
         effect(c) {
             let x = c.mul(.01).add(1).pow(2)
             return x
@@ -148,7 +148,7 @@ export const CHALLENGES = {
         goal: a => a.pow_base(1.05).mul(5e5).pow10().mul(1.5e56),
         bulk: a => a.div(1.5e56).log10().div(5e5).log(1.05).add(1).floor(),
 
-        get strength() { return simpleAchievementEffect(56) },
+        get strength() { return Decimal.mul(challengeEffect('3-6'),simpleAchievementEffect(56)) },
         effect(c) {
             if (c.eq(0)) return DC.D0;
             let x = c.add(2).slog(2).pow(3).sub(1).div(500)
@@ -167,7 +167,7 @@ export const CHALLENGES = {
         goal: a => a.pow_base(1.05).mul(400).pow10().mul(1.5e56),
         bulk: a => a.div(1.5e56).log10().div(400).log(1.05).add(1).floor(),
 
-        get strength() { return simpleAchievementEffect(56) },
+        get strength() { return Decimal.mul(challengeEffect('3-6'),simpleAchievementEffect(56)) },
         effect(c) {
             let x = c.div(50).add(1).root(2)
             return x
@@ -183,15 +183,130 @@ export const CHALLENGES = {
         get desc() { return `Layer 1 challenges are activated/trapped once.<br><i>Note: Trapped challenges can be completed <b>AUTOMATICALLY</b> up to the best completions you beat.</i>` },
 
         res: "mass",
-        goal: a => a.pow_base(1.1).mul(DC.LOG10_MAX_VALUE).pow10().mul(1.5e56),
-        bulk: a => a.div(1.5e56).log10().div(DC.LOG10_MAX_VALUE).log(1.1).add(1).floor(),
+        goal: a => a.scale(25,75,"DA").pow_base(1.1).mul(DC.LOG10_MAX_VALUE).pow10().mul(1.5e56),
+        bulk: a => a.div(1.5e56).log10().div(DC.LOG10_MAX_VALUE).log(1.1).add(1).scale(25,75,"DA",true).floor(),
 
-        get strength() { return simpleAchievementEffect(56) },
+        get strength() { return Decimal.mul(challengeEffect('3-6'),simpleAchievementEffect(56)) },
         effect(c) {
             let x = c.div(10).add(1).root(2)
             return x
         },
         reward: x => `Layer 1 challenges’ reward is <b>${formatPercent(x.sub(1))}</b> stronger.`,
+    },
+
+    '3-1': {
+        name: "Kappa",
+        symbol: "κ",
+        layer: 3,
+
+        get desc() { return `The exponent of normal mass and black hole is reduced by <b>^0.5</b>.` },
+
+        res: "mass",
+        goal: a => a.pow_base(1.5).mul(1e5).pow10().mul(1.5e56),
+        bulk: a => a.div(1.5e56).log10().div(1e5).log(1.5).add(1).floor(),
+
+        get strength() { return simpleAchievementEffect(65) },
+        effect(c) {
+            let x = c.mul(.3).add(1).root(3)
+            return x
+        },
+        reward: x => `The base of <b>mlt1</b> & <b>bmlt1</b> upgrades is increased by <b>${formatMult(x,4)}</b>.`,
+    },
+    '3-2': {
+        name: "Lambda",
+        symbol: "λ",
+        layer: 3,
+        trap: ['1-2','2-2'],
+
+        get desc() { return `You cannot purchase any black hole upgrades. The <b>β</b> and <b>ζ</b> challenges are activated once. Additionally, the exponent of normal mass and black hole is reduced by <b>^0.75</b>.` },
+
+        res: "mass",
+        goal: a => a.pow_base(1.5).mul(1e6).pow10().mul(1.5e56),
+        bulk: a => a.div(1.5e56).log10().div(1e6).log(1.5).add(1).floor(),
+
+        get strength() { return simpleAchievementEffect(65) },
+        effect(c) {
+            let x = c.mul(.3).add(1).root(3)
+            return x
+        },
+        reward: x => `The base of <b>m3</b> & <b>m5</b> upgrades is increased by <b>${formatMult(x,4)}</b>.`,
+    },
+    '3-3': {
+        name: "Mu",
+        symbol: "μ",
+        layer: 3,
+        trap: ['1-3','1-4','2-4'],
+        
+        get desc() { return `The <b>γ</b>, <b>δ</b>, and <b>θ</b> challenges are activated once, and their nerf is <b>twice</b> stronger.` },
+
+        res: "mass",
+        goal: a => a.pow_base(1.5).mul(1e7).pow10().mul(1.5e56),
+        bulk: a => a.div(1.5e56).log10().div(1e7).log(1.5).add(1).floor(),
+
+        get strength() { return simpleAchievementEffect(65) },
+        effect(c) {
+            let x = c.mul(.3).add(1).root(3)
+            return x
+        },
+        reward: x => `The <b>bh2</b> upgrade is <b>${formatPercent(x.sub(1))}</b> stronger.`,
+    },
+    '3-4': {
+        name: "Nu",
+        symbol: "ν",
+        layer: 3,
+        trap: ['2-3'],
+
+        get desc() { return `All black hole resources cannot be earned nor generated. The <b>η</b> challenge is activated too. Additionally, the exponent of normal mass is reduced by <b>^0.75</b>.` },
+
+        res: "mass",
+        goal: a => a.pow_base(1.5).mul(1e6).pow10().mul(1.5e56),
+        bulk: a => a.div(1.5e56).log10().div(1e6).log(1.5).add(1).floor(),
+
+        get strength() { return simpleAchievementEffect(65) },
+        effect(c) {
+            if (c.eq(0)) return DC.D0;
+            let x = c.add(2).slog(2).pow(3).sub(1).div(500)
+            return x
+        },
+        reward: x => `Increase the exponent of the second effect of the black hole and anti-black hole by <b>+${format(x,4)}</b>.`,
+    },
+    '3-5': {
+        name: "Xi",
+        symbol: "ξ",
+        layer: 3,
+        trap: ['2-1'],
+        
+        get desc() { return `The <b>m1-4</b>, <b>r1</b>, and <b>bh1-2</b> upgrades’ strength is always <b>1%</b>. The <b>ε</b> challenge is activated too.` },
+        
+        res: "mass",
+        goal: a => a.pow_base(1.5).mul(1e6).pow10().mul(1.5e56),
+        bulk: a => a.div(1.5e56).log10().div(1e6).log(1.5).add(1).floor(),
+
+        get strength() { return simpleAchievementEffect(65) },
+        effect(c) {
+            let x = c.mul(0.3).add(1).root(3)
+            return x
+        },
+        reward: x => `Multiversal energy & fragment generations are <b>${formatPercent(x.sub(1))}</b> stronger.`,
+    },
+    '3-6': {
+        name: "Omicron",
+        symbol: "ο",
+        layer: 3,
+        trap: ['1-1','1-2','1-3','1-4','2-1','2-2','2-3','2-4','2-5'],
+        
+        get desc() { return `Layer 1–2 challenges are activated once. Additionally, the exponent of normal mass and black hole is reduced by <b>^0.75</b>.` },
+
+        res: "mass",
+        goal: a => a.pow_base(1.5).mul(1e10).pow10().mul(1.5e56),
+        bulk: a => a.div(1.5e56).log10().div(1e10).log(1.5).add(1).floor(),
+
+        get strength() { return simpleAchievementEffect(65) },
+        effect(c) {
+            let x = c.div(15).add(1).root(3)
+            return x
+        },
+        reward: x => `Layer 1-2 challenges’ reward is <b>${formatPercent(x.sub(1))}</b> stronger.`,
     },
 
     /*
@@ -215,6 +330,17 @@ export const CHALLENGES_MAP = [
     null,
     ['1-1','1-2','1-3','1-4'],
     ['2-1','2-2','2-3','2-4','2-5'],
+    ['3-1','3-2','3-3','3-4','3-5','3-6'],
+]
+export const CHALLENGE_LAYERS = CHALLENGES_MAP.length-1
+
+export const SET_BEST_CHAL = [
+    null,
+    () => player.mlt.times.gte(20),
+]
+export const AUTO_CHAL = [
+    null,
+    () => player.mlt.times.gte(24),
 ]
 
 export function getActiveChallenge(layer) {
@@ -223,6 +349,11 @@ export function getActiveChallenge(layer) {
 }
 
 export function insideChallenge(id) { return temp.trapped_chal[id] || player.chal.active[id] }
+
+export function checkIsChallengeOutside() {
+    for (let C in CHALLENGES) if (insideChallenge(C)) return false;
+    return true;
+}
 
 export function enterChallenge(c) {
     const C = CHALLENGES[c]
@@ -257,17 +388,26 @@ export function enterChallenge(c) {
                 break
             }
             case 2: {
-                RESETS.multiverse.doReset()
+                RESETS.multiverse.doReset(true)
+                break
+            }
+            case 3: {
+                resetChallengeLayers(2)
+                resetUpgradesByGroup('mlt')
+                player.mlt.energy = DC.D0, player.mlt.total_energy = DC.D0
+                RESETS.multiverse.doReset(true)
                 break
             }
         }
 
         if (temp.trapped_chal[c]) giveAchievement(55);
     }
+
+    if (checkIsChallengeOutside()) for (let l = 1; l <= CHALLENGE_LAYERS; l++) if (SET_BEST_CHAL[l]?.()) for (let C of CHALLENGES_MAP[l]) player.chal.completions[C] = E(player.chal.best[C]);
 }
 
 export function getChallengeLayersUnlocked() {
-    return 1+player.mlt.times.gte(11)
+    return 1+player.mlt.times.gte(11)+player.mlt.times.gte(31)
 }
 export function challengeEffect(id,def=1) { return temp.chal_effect[id] ?? def }
 export function resetChallengeLayers(layer) { for (let l = 1; l <= layer; l++) for (let C of CHALLENGES_MAP[l]) player.chal.completions[C] = DC.D0; }

@@ -434,6 +434,8 @@ const MASS_NAMES = {
     ],
 }
 
+export function mlt(x) { return Decimal.mul(x, 1e9).pow10().mul(1.5e56) }
+
 function getMltValue(mass){
 	mass = E(mass);
 	if(mass.lte(1e50)){
@@ -446,12 +448,14 @@ function getMltValue(mass){
 function getARVName(i,lode) { const n = MASS_NAMES[mass_type], v = VERSES[mass_type][0][i-1]; return i > 0 ? v ? v + (!lode && (mass_type == 'standard' || i != 1) ? n[8] : "") : (lode ? n[9] : n[9]+n[8])+formatPow(i,0) : "" }
 
 function formatARV(ex,lode) {
-    if (lode && ex.lt(1e15)) return format(ex) + " "
-    const n = MASS_NAMES[mass_type]
-    const mlt = lode ? ex.div(1e15) : getMltValue(ex);
-    const arv = mlt.log10().div(15)
+  if (lode && ex.lt(1e15)) return format(ex) + " "
+  const n = MASS_NAMES[mass_type]
+  const mlt = lode ? ex.div(1e15) : getMltValue(ex);
+  const arv = mlt.log10().div(15)
 	if(arv.add(1).gte(1000)) return format(arv.add(1))+" "+n[9]+ (lode ? "s-" : n[8]+"s");
-    return format(mlt.div(Decimal.pow(1e15,arv.floor()))) + " " + getARVName(arv.add(1).floor().toNumber(),lode) + (lode ? "-" : "")
+  let nn = arv.add(1).floor().toNumber()
+  if (!lode) nn = Math.max(1,nn);
+  return format(mlt.div(Decimal.pow(1e15,arv.floor()))) + " " + getARVName(nn,lode) + (lode ? "-" : "")
 }
 
 function formatLDV(ex) {
@@ -525,8 +529,8 @@ export function formatGain(a,e,mass) {
     
         if (a.gte(1e100)) {
             const oom = g.div(a).log10().mul(FPS)
-            if (mass && oom.gte(1e9) && a.lt(MAX_ARVS)) return "(+" + formatARV(Decimal.pow(10,oom)) + "/s)"
-            if (oom.gte(1)) return "(+" + oom.format() + " OoMs/s)"
+            if (mass && a.gte('1.5e1000000056') && a.lt(MAX_ARVS)) return "(+" + formatARV(Decimal.pow(10,oom)) + "/s)"
+            if (oom.gte(10)) return "(+" + oom.format() + " OoMs/s)"
         }
     }
 

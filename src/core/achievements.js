@@ -51,7 +51,7 @@ export const ACHIEVEMENTS = {
         title: `I ate without cheapness`,
         get description() { return `Reach <b>${formatMass('1.5e806')}</b> of normal mass without purchasing the fourth mass upgrade.` },
         get reward() { return `The fourth mass upgrade applies to the <b>r1</b> upgrade at a dilated rate (10<sup>lg(x)<sup>${format(1/3,4)}</sup></sup>).` },
-        effect: [()=>expPow(Decimal.max(upgradeEffect('m4'),1),1/3),x=>formatMult(x.pow(-1))],
+        effect: [()=>expPow(Decimal.max(upgradeEffect('m4'),1),hasUpgrade('mlt14') ? 0.5 : 1/3),x=>formatMult(x.pow(-1))],
         condition: ()=>!hasUpgrade('m4') && player.mass.gte('1.5e806'),
     },
     25: {
@@ -167,12 +167,46 @@ export const ACHIEVEMENTS = {
         title: `The Completionist`,
         get description() { return `Get <b>${format(1e3,0)}</b> of total challenge completions.` },
         get reward() { return `L1 & L2 challenges are <b>1%</b> stronger.` },
-        effect: [()=>1.01],
+        effect: [()=>hasAchievement(65) ? 1.1 : 1.01],
         condition: ()=>{
             let x = DC.D0
             for (let id in CHALLENGES) x = x.add(player.chal.completions[id]);
             return x.gte(1e3)
         },
+    },
+
+    61: {
+        title: `One Punch Man: The Multiverse Breaker`,
+        get description() { return `Break the Multiverse, reaching <b>${formatMass(mlt(1))}</b> of normal mass.` },
+        get reward() { return `Multiversal energy generation is <b>10%</b> stronger.` },
+        effect: [()=>1.1],
+    },
+    62: {
+        title: `This Sisyphus never ends`,
+        get description() { return `Reach <b>Pent 1</b>.` },
+        condition: ()=>player.ranks[3].gte(1),
+    },
+    63: {
+        title: `Vantablack`,
+        get description() { return `Reach <b>${formatMass(mlt(1))}</b> of the black hole.` },
+        condition: ()=>player.bh.mass.gte(mlt(1)),
+    },
+    64: {
+        title: `Are you getting many medals?`,
+        get description() { return `Reach <b>Rank ${format(1e5,0)}</b>.` },
+        condition: ()=>player.ranks[0].gte(1e5),
+    },
+    65: {
+        title: `Hello everybody, my name is Markiplier and welcome to Five Nights at Freddy's, an indie horror game that you guys suggested, en masse, and I saw that Yamimash played it and he said it was really really good... So I'm very eager to see what is up. And that is a terrifying animatronic bear! 'Family pizzeria looking for security guard to work the nightshift.' Oh... 12 a.m. The first night. If I didn't wanna stay the first night, why would I stay any more than... five... Why I stay any more than two- hello? Okay...`,
+        get description() { return `Reach <b>${formatMass('1.5e1000056')}</b> of normal mass without purchasing the <b>m1</b> upgrade inside the <b>γ</b>, <b>ε</b>, and <b>ν</b> challenges.` },
+        get reward() { return `L3 challenges are <b>10%</b> stronger. <b>Tenfold</b> the <b>“The Completionist”</b> achievement's reward.` },
+        effect: [()=>1.1],
+        condition: ()=>insideChallenge('1-3') && insideChallenge('2-1') && insideChallenge('3-4') && !hasUpgrade('m1') && player.mass.gte('1.5e1000056'),
+    },
+    66: {
+        title: `Why can’t I hold all these multiverses`,
+        get description() { return `Reach <b>${formatMass('ee24')}</b> of normal mass.` },
+        condition: ()=>player.mass.gte('ee24'),
     },
 }
 

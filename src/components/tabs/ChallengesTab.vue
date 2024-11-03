@@ -63,6 +63,7 @@ export default {
                 "How did you get this challenge?",
                 `Entering this challenge forces the black hole reset.`,
                 `Entering this challenge forces the multiverse reset.`,
+                `Entering this challenge forces the multiverse reset, resetting multiversal energy and multiverse upgrades.`,
             ][C.layer]
         },
         get_chal_button() {

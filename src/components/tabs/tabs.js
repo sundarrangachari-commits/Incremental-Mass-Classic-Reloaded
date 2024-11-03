@@ -2,6 +2,7 @@ import AchievementsTab from './achievements/AchievementsTab.vue'
 import BlackHoleTab from './BlackHoleTab.vue'
 import ChallengesTab from './ChallengesTab.vue'
 import MassTab from './MassTab.vue'
+import BreakMultiverseTab from './mlt/BreakMultiverseTab.vue'
 import MultiverseMilestonesTab from './mlt/MultiverseMilestonesTab.vue'
 import MultiverseTab from './mlt/MultiverseTab.vue'
 import OptionsTab from './options/OptionsTab.vue'
@@ -36,6 +37,10 @@ export const TabContents = {
         name: "Multiverse Milestones",
         component: MultiverseMilestonesTab,
     },
+    "break_mlt": {
+        name: "Break Multiverse",
+        component: BreakMultiverseTab,
+    },
     "options": {
         name: "Options",
         component: OptionsTab,
@@ -60,6 +65,7 @@ export const TabSystem = [
         stab: [
             ["mlt"],
             ["mlt_milestone"],
+            ["break_mlt",()=>player.mlt.times.gte(17)],
         ],
     },{
         name: "Challenges",

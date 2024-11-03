@@ -213,3 +213,8 @@ h4 {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
+.small-text {
+  font-size: 10px;
+  color: #aaa;
+}

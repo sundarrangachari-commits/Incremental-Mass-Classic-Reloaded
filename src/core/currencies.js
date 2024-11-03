@@ -15,7 +15,12 @@ export const CURRENCIES = {
 
             x = x.pow(temp.mlt_effect[0]).pow(rankEffect(0,10)).pow(challengeEffect('1-3'))
             if (player.ranks[1].gte(2)) x = x.pow(1.15);
-            if (insideChallenge('1-3')) x = x.pow(.1);
+            if (insideChallenge('1-3')) x = x.pow(insideChallenge('3-3') ? .01 : .1);
+
+            if (insideChallenge('3-1')) x = expPow(x,.5);
+            if (insideChallenge('3-2')||insideChallenge('3-4')||insideChallenge('3-6')) x = expPow(x,.75);
+
+            if (!player.mlt.broken) x = x.min(mlt(1));
 
             return x
         },
@@ -39,7 +44,7 @@ export const CURRENCIES = {
             x = x.pow(simpleUpgradeBoost('mlt8',temp.mlt_effect[0])).pow(challengeEffect('1-4'))
             if (player.ranks[0].gte(350)) x = x.pow(rankEffect(0,10));
             if (hasUpgrade('bh12')) x = x.pow(1.15);
-            if (insideChallenge('1-4')) x = x.pow(.1);
+            if (insideChallenge('1-4')) x = x.pow(insideChallenge('3-3') ? .01 : .1);
 
             return x
         },
@@ -57,15 +62,16 @@ export const CURRENCIES = {
         get gain() {
             let x = (insideChallenge('2-3') ? player.mass : player.rage.powers).div(this.require)
 
-            if (x.lt(1)) return DC.D0;
+            if (x.lt(1) || insideChallenge('3-4')) return DC.D0;
 
             let exp = 0.5
+            exp = Decimal.add(exp,simpleUpgradeBoost('bmlt10',challengeEffect('2-3',0),0))
             if (insideChallenge('2-3')) exp = Decimal.mul(exp,CURRENCIES.rage.exponent);
 
             x = expPow(x,exp).mul(temp.abh_effect[2]??1)
 
-            x = x.pow(challengeEffect('2-4'))
-            if (insideChallenge('2-4')) x = x.pow(.1);
+            x = x.pow(challengeEffect('2-4')).pow(simpleUpgradeBoost('mlt15',temp.mlt_effect[0]))
+            if (insideChallenge('2-4')) x = x.pow(insideChallenge('3-3') ? .01 : .1);
 
             return x
         },
@@ -80,12 +86,15 @@ export const CURRENCIES = {
         set amount(v) { player.bh.mass = v.max(0) },
     
         get gain() {
-            if (!player.bh.unlocked) return DC.D0;
+            if (!player.bh.unlocked || insideChallenge('3-4')) return DC.D0;
 
             let x = DC.D1.mul(upgradeEffect('bh1')).mul(temp.bh_effect[1]).mul(temp.abh_effect[0]).mul(simpleUpgradeEffect('r10'))
 
             x = x.pow(simpleUpgradeBoost('mlt10',temp.mlt_effect[0])).pow(challengeEffect('2-4'))
-            if (insideChallenge('2-4')) x = x.pow(.1);
+            if (insideChallenge('2-4')) x = x.pow(insideChallenge('3-3') ? .01 : .1);
+
+            if (insideChallenge('3-1')) x = expPow(x,.5);
+            if (insideChallenge('3-2')||insideChallenge('3-6')) x = expPow(x,.75);
 
             return x
         },
@@ -98,12 +107,12 @@ export const CURRENCIES = {
         set amount(v) { player.bh.anti_mass = v.max(0) },
     
         get gain() {
-            if (!hasUpgrade('bh8')) return DC.D0;
+            if (!hasUpgrade('bh8') || insideChallenge('3-4')) return DC.D0;
 
             let x = DC.D1.mul(temp.abh_effect[1]).mul(simpleUpgradeEffect('bh11')).mul(simpleUpgradeEffect('bh13'))
 
             x = x.pow(simpleUpgradeBoost('mlt12',temp.mlt_effect[0])).pow(challengeEffect('2-4'))
-            if (insideChallenge('2-4')) x = x.pow(.1);
+            if (insideChallenge('2-4')) x = x.pow(insideChallenge('3-3') ? .01 : .1);
             
             return x
         },
@@ -118,14 +127,33 @@ export const CURRENCIES = {
         set total(v) { player.mlt.total_energy = v.max(0) },
     
         get gain() {
-            let m = player.mlt.times
+            let m = player.mlt.times.mul(challengeEffect('3-5')).mul(simpleAchievementEffect(61))
 
             if (!player.mlt.unlocked || m.lt(1)) return DC.D0;
 
-            let x = m.sub(1).pow_base(m).mul(m)
+            let x = m.pow_base(m)
             if (m.gte(6)) x = x.pow(2);
             
-            x = x.mul(upgradeEffect('mlt1')).mul(rankEffect(0,11)).mul(simpleUpgradeEffect('r13')).mul(simpleUpgradeEffect('bh15')).mul(simpleUpgradeEffect('mlt9')).mul(simpleUpgradeEffect('mlt13')).mul(simpleAchievementEffect(43))
+            x = x.mul(upgradeEffect('mlt1')).mul(rankEffect(0,11)).mul(simpleUpgradeEffect('r13')).mul(simpleUpgradeEffect('bh15')).mul(simpleUpgradeEffect('mlt9')).mul(simpleUpgradeEffect('mlt13')).mul(simpleAchievementEffect(43)).mul(simpleUpgradeEffect('bmlt3'))
+
+            return x
+        },
+    },
+    'mlt-fragments': {
+        name: "Multiversal Fragments",
+
+        get amount() { return player.mlt.fragments },
+        set amount(v) { player.mlt.fragments = v.max(0) },
+
+        get total() { return player.mlt.total_fragments },
+        set total(v) { player.mlt.total_fragments = v.max(0) },
+    
+        get gain() {
+            if (!player.mlt.broken) return DC.D0;
+
+            let m = player.mlt.times.sub(17).max(0).mul(challengeEffect('3-5')).add(1)
+
+            let x = m.pow(0.75).pow_base(m).max(1).mul(upgradeEffect('bmlt1')).mul(simpleUpgradeEffect('bmlt7'))
 
             return x
         },
@@ -165,7 +193,7 @@ export const TOPBAR_CURRENCIES = {
         },
     },
     "dark-matter": {
-        unl: ()=>player.rage.unlocked,
+        unl: ()=>!insideChallenge('3-4') && player.rage.unlocked,
         name: "Dark Matter",
         color: "#fe5",
         get display() {
@@ -182,7 +210,7 @@ export const TOPBAR_CURRENCIES = {
         },
     },
     "black-hole": {
-        unl: ()=>player.bh.unlocked,
+        unl: ()=>!insideChallenge('3-4') && player.bh.unlocked,
         name: "Black Hole",
         color: "#fe5",
         get display() {
@@ -195,7 +223,7 @@ export const TOPBAR_CURRENCIES = {
         },
     },
     "anti-black-hole": {
-        unl: ()=>hasUpgrade('bh8'),
+        unl: ()=>!insideChallenge('3-4') && hasUpgrade('bh8'),
         name: "Anti-Black Hole",
         color: "#5ef",
         get display() {
@@ -217,9 +245,10 @@ export const TOPBAR_CURRENCIES = {
             return h
         },
         get tooltip() {
-            let c = CURRENCIES["mlt-energy"]
+            let c = CURRENCIES["mlt-energy"], b = CURRENCIES["mlt-fragments"]
             let h = `<h3>Multiverse</h3>`
             if (player.mlt.unlocked) h += `<br class='sub-line'>You have <b>${format(c.amount)}</b> ${formatGain(c.amount,temp.currency_gain['mlt-energy'])} multiversal energy.`;
+            if (player.mlt.broken)  h += `<br>You have <b>${format(b.amount)}</b> ${formatGain(b.amount,temp.currency_gain['mlt-fragments'])} multiversal fragments.`;
             h += `<br class='sub-line'><i>Reach <b>${formatMass(MULTIVERSE.require())}</b> of normal mass to reset everything the black hole does, as well as dark matter, the black hole, the black hole upgrades, and the anti-black hole to raise the Multiverse.</i>`
             return h
         },

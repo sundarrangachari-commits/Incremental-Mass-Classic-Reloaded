@@ -20,12 +20,14 @@ export function getTempData() {
         abh_effect: [DC.D1, DC.D1, DC.D1],
 
         mlt_effect: [DC.D1],
+        break_mlt_effect: [DC.D1],
 
         achievement_effects: {},
 
         trapped_chal: {},
         outside_chal: true,
         chal_effect: {},
+        highest_active_layer: 0,
     }
     for (let i = 0; i < RANKS_LEN; i++) {
         s.rank_effects[i] = {}
@@ -43,6 +45,7 @@ export const TempUpdate = {};
 window.createTempUpdate = (name, method) => { TempUpdate[name] = method }
 
 export function updateTemp() {
+    let ha = 0
     temp.outside_chal = true
     for (let id in CHALLENGES) {
         temp.trapped_chal[id] = false
@@ -51,9 +54,11 @@ export function updateTemp() {
 
         if (player.chal.active[id]) {
             temp.outside_chal = false
+            ha = Math.max(ha, C.layer)
             if ('trap' in C) for (let t of C.trap) temp.trapped_chal[t] = true;
         }
     }
+    temp.highest_active_layer = ha
 
     TempUpdate['updateRanksTemp']()
     TempUpdate['updateUpgradesTemp']()
