@@ -102,7 +102,7 @@ export const TabSystem = [
 
 export const Tab = {
     tab: 0,
-    subtab: [2,0],
+    subtab: [0,0],
     /*
     get currentComponent() {
         let tab_ctn = TabSystem[this.tab], stab = tab_ctn.stab, component;
