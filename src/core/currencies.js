@@ -13,7 +13,7 @@ export const CURRENCIES = {
 
             if (hasAchievement(13)) x = x.mul(3);
 
-            x = x.pow(temp.mlt_effect[0]).pow(rankEffect(0,10)).pow(challengeEffect('1-3')).pow(upgradeEffect('exm2')).pow(temp.bh_effect[3])
+            x = x.pow(temp.mlt_effect[0]).pow(rankEffect(0,10)).pow(challengeEffect('1-3')).pow(upgradeEffect('exm2')).pow(temp.bh_effect[3] ?? 1)
             if (player.ranks[1].gte(2)) x = x.pow(1.15);
             if (insideChallenge('1-3')) x = x.pow(insideChallenge('3-3') ? .01 : .1);
 

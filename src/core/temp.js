@@ -19,7 +19,7 @@ export function getTempData() {
         prestiges_fp: 1,
         prestige_effects: [],
 
-        bh_effect: [DC.D1, DC.D1, DC.D1],
+        bh_effect: [DC.D1, DC.D1, DC.D1, DC.D1],
         abh_effect: [DC.D1, DC.D1, DC.D1],
 
         mlt_effect: [DC.D1],
