@@ -87,7 +87,7 @@ export const TabSystem = [
         unl: ()=>true,
         stab: [
             ["ranks"],
-            ["prestiges",()=>player.first_prestiges[0]],
+            ["prestiges",()=>player.first_prestiges[0]==true],
         ],
     },{
         name: "Options",
