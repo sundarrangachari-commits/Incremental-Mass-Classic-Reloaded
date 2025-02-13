@@ -16,6 +16,9 @@ export function getTempData() {
         ranks_fp: 1,
         rank_effects: [],
 
+        prestiges_fp: 1,
+        prestige_effects: [],
+
         bh_effect: [DC.D1, DC.D1, DC.D1],
         abh_effect: [DC.D1, DC.D1, DC.D1],
 
@@ -31,6 +34,9 @@ export function getTempData() {
     }
     for (let i = 0; i < RANKS_LEN; i++) {
         s.rank_effects[i] = {}
+    }
+    for (let i = 0; i < PRESTIGES_LEN; i++) {
+        s.prestige_effects[i] = {}
     }
     for (let id in CHALLENGES) {
         s.trapped_chal[id] = false
@@ -60,6 +66,7 @@ export function updateTemp() {
     }
     temp.highest_active_layer = ha
 
+    TempUpdate['updatePrestigesTemp']()
     TempUpdate['updateRanksTemp']()
     TempUpdate['updateUpgradesTemp']()
 

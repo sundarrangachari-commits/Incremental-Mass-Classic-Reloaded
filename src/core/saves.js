@@ -1,4 +1,5 @@
 import { imageUrls } from "./preload";
+import { PRESTIGES, PRESTIGES_LEN } from "./prestiges";
 import { RANKS, RANKS_LEN } from "./ranks";
 import { updateTemp } from "./temp";
 
@@ -11,9 +12,14 @@ export const FPS = 30
 export function getPlayerData() {
     let s = {
         mass: DC.D0,
+        exmass: DC.D0,
         
         ranks: [],
         first_ranks: [],
+
+        prestiges: [],
+        first_prestiges: [],
+
         upgrades: {},
         auto_upgs: {},
 
@@ -59,6 +65,7 @@ export function getPlayerData() {
     }
     for (let k in UPGRADES) s.upgrades[k] = DC.D0;
     for (let i = 0; i < RANKS_LEN; i++) s.ranks[i] = DC.D0;
+    for (let i = 0; i < PRESTIGES_LEN; i++) s.prestiges[i] = DC.D0;
     for (let i in CHALLENGES) {
         s.chal.active[i] = false
         s.chal.completions[i] = DC.D0
@@ -274,6 +281,16 @@ function setupGame() {
         })
         Object.defineProperty(RANKS[i],"res",{
             get() { return i == 0 ? player.mass : player.ranks[i-1] },
+        })
+    }
+
+    for (let i = 0; i < PRESTIGES_LEN; i++) {
+        Object.defineProperty(PRESTIGES[i],"amount",{
+            get() { return player.prestiges[i] },
+            set(v) { player.prestiges[i] = v }
+        })
+        Object.defineProperty(PRESTIGES[i],"res",{
+            get() { return i == 0 ? player.exmass : player.prestiges[i-1] },
         })
     }
 

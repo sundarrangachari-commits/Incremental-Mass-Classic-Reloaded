@@ -1,5 +1,6 @@
 import { BH_UPGRADES } from "./black-hole"
 import { MLT_UPGRADES } from "./mlt/multiverse"
+import { EXMASS_UPGRADES } from "./prestiges"
 
 export const UPGRADES = {
     'm1': {
@@ -124,6 +125,7 @@ export const UPGRADES = {
         get strength() { return 1 },
         get base() {
             let b = .05
+            if (player.prestiges[1].gte(2)) b += .01;
             return b
         },
         effect(a) {
@@ -334,6 +336,7 @@ export const UPGRADES = {
 
     ...BH_UPGRADES,
     ...MLT_UPGRADES,
+    ...EXMASS_UPGRADES,
 }
 
 export const UPG_KEYS = Object.keys(UPGRADES)
@@ -343,7 +346,8 @@ export const UPG_GROUPS = {
     'rage': ['r1','r2','r3','r4','r5','r6','r7','r8','r9','r10','r11','r12','r13','r14','r15'],
     'bh': ['bh1','bh2','bh3','bh4','bh5','bh6','bh7','bh8','bh9','bh10','bh11','bh12','bh13','bh14','bh15'],
     'mlt': ['mlt1','mlt2','mlt3','mlt4','mlt5','mlt6','mlt7','mlt8','mlt9','mlt10','mlt11','mlt12','mlt13','mlt14','mlt15'],
-    'break_mlt': ['bmlt1','bmlt2','bmlt3','bmlt4','bmlt5','bmlt6','bmlt7','bmlt8','bmlt9','bmlt10'],
+    'break_mlt': ['bmlt1','bmlt2','bmlt3','bmlt4','bmlt5','bmlt6','bmlt7','bmlt8','bmlt9','bmlt10','bmlt11'],
+    'exmass': ['exm1','exm2','exm3','exm4','exm5'],
 }
 
 export const AUTO_UPG_GROUPS = {

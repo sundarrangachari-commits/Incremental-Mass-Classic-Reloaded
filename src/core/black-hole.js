@@ -210,6 +210,7 @@ export const BH_effects = [
     x => `the normal mass by <h3>${formatMult(x)}</h3>`,
     x => `mass of black hole by <h3>${formatMult(x)}</h3>`,
     x => `rage powers by <h3>${formatMult(x)}</h3>`,
+    x => `the normal mass by <h3>${formatPow(x)}</h3>`,
 ]
 
 export const ABH_effects = [
@@ -227,6 +228,7 @@ function getBHEffect() {
     ]
 
     if (hasUpgrade('bh6')) a[2] = expPow(bh.add(1), 0.4).pow(simpleUpgradeEffect('bh8')).pow(simpleAchievementEffect(26));
+    if (hasUpgrade('exm5')) a[3] = expPow(player.bh.mass.add(10).log10(),1/3).pow(simpleAchievementEffect(26));
 
     return a
 }

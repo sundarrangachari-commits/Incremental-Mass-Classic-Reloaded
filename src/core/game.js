@@ -13,6 +13,11 @@ function calc(dt) {
         if (R.unl() && R.auto?.() && res.gte(R.require(R.amount))) R.amount = R.bulk(res).max(R.amount.add(1));
     }
 
+    for (let i = 0; i < PRESTIGES_LEN; i++) {
+        const R = PRESTIGES[i], res = R.res
+        if (R.unl() && R.auto?.() && res.gte(R.require(R.amount))) R.amount = R.bulk(res).max(R.amount.add(1));
+    }
+
     for (let id of UPG_KEYS) if (UPGRADES[id].unl() && temp.auto_upgs_unlocked[id] && player.auto_upgs[id]) buyUpgrade(id,true,true);
 
     for (let l = 1; l <= CHALLENGE_LAYERS; l++) {

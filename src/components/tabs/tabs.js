@@ -1,11 +1,13 @@
 import AchievementsTab from './achievements/AchievementsTab.vue'
 import BlackHoleTab from './BlackHoleTab.vue'
 import ChallengesTab from './ChallengesTab.vue'
+import ExMassTab from './ex-mass/ExMassTab.vue'
 import MassTab from './MassTab.vue'
 import BreakMultiverseTab from './mlt/BreakMultiverseTab.vue'
 import MultiverseMilestonesTab from './mlt/MultiverseMilestonesTab.vue'
 import MultiverseTab from './mlt/MultiverseTab.vue'
 import OptionsTab from './options/OptionsTab.vue'
+import PrestigesTab from './PrestigesTab.vue'
 import RanksTab from './RanksTab.vue'
 
 export const TabComponents = {
@@ -21,9 +23,17 @@ export const TabContents = {
         name: "Black Hole",
         component: BlackHoleTab,
     },
+    "exmass": {
+        name: "Ex-Mass",
+        component: ExMassTab,
+    },
     "ranks": {
         name: "Rank Rewards",
         component: RanksTab,
+    },
+    "prestiges": {
+        name: "Prestige Rewards",
+        component: PrestigesTab,
     },
     "achievements": {
         name: "Achievements",
@@ -58,6 +68,7 @@ export const TabSystem = [
         stab: [
             ["mass"],
             ["bh",()=>player.bh.unlocked],
+            ["exmass",()=>player.mlt.times.gte(50)],
         ],
     },{
         name: "Multiverse",
@@ -76,6 +87,7 @@ export const TabSystem = [
         unl: ()=>true,
         stab: [
             ["ranks"],
+            ["prestiges",()=>player.first_prestiges[0]],
         ],
     },{
         name: "Options",
@@ -90,7 +102,7 @@ export const TabSystem = [
 
 export const Tab = {
     tab: 0,
-    subtab: [0,0],
+    subtab: [2,0],
     /*
     get currentComponent() {
         let tab_ctn = TabSystem[this.tab], stab = tab_ctn.stab, component;

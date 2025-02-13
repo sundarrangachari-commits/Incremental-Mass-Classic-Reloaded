@@ -1,9 +1,9 @@
-import { formatMult } from "./format"
+import { formatMult, formatPercent } from "./format"
 
 export const ACHIEVEMENTS = {
     11: {
         title: `One must imagine Sisyphus happy`,
-        get description() { return `Reach <b>Rank 1</b>.` },
+        get description() { return `Do <b>Rank</b> up.` },
         condition: ()=>player.ranks[0].gte(1),
     },
     12: {
@@ -18,7 +18,7 @@ export const ACHIEVEMENTS = {
     },
     14: {
         title: `Upgraded Sisyphus`,
-        get description() { return `Reach <b>Tier 1</b>.` },
+        get description() { return `Do <b>Tier</b> up.` },
         condition: ()=>player.ranks[1].gte(1),
     },
     15: {
@@ -78,7 +78,7 @@ export const ACHIEVEMENTS = {
     },
     33: {
         title: `Tetrahedron`,
-        get description() { return `Reach <b>Tetr 1</b>.` },
+        get description() { return `Do <b>Tetr</b> up.` },
         condition: ()=>player.ranks[2].gte(1),
     },
     34: {
@@ -183,7 +183,7 @@ export const ACHIEVEMENTS = {
     },
     62: {
         title: `This Sisyphus never ends`,
-        get description() { return `Reach <b>Pent 1</b>.` },
+        get description() { return `Do <b>Pent</b> up.` },
         condition: ()=>player.ranks[3].gte(1),
     },
     63: {
@@ -207,6 +207,44 @@ export const ACHIEVEMENTS = {
         title: `Why can’t I hold all these multiverses`,
         get description() { return `Reach <b>${formatMass('ee24')}</b> of normal mass.` },
         condition: ()=>player.mass.gte('ee24'),
+    },
+
+    71: {
+        title: `Did you see the nostalgic thing?`,
+        get description() { return `Reach multiverse <b>#50</b>.` },
+        condition: ()=>player.mlt.times.gte(50),
+    },
+    72: {
+        title: `PRESTIGE TREE INSPIRED???`,
+        get description() { return `Do <b>Prestige</b> up.` },
+        condition: ()=>player.prestiges[0].gte(1),
+    },
+    73: {
+        title: `Gigachad mentioned!`,
+        get description() { return `Reach <b>${formatMass('ee39')}</b> of normal mass.` },
+        condition: ()=>player.mass.gte('ee39'),
+    },
+    74: {
+        title: `Honored`,
+        get description() { return `Do <b>Honor</b> up.` },
+        get reward() { return `Multiversal fragment generation is <b>10%</b> stronger.` },
+        effect: [()=>1.1],
+        condition: ()=>player.prestiges[1].gte(1),
+    },
+    75: {
+        title: `Don’t worry, it’s a piece of cake`,
+        get description() { return `Get <b>${format(100,0)}</b> of every L3 challenge completions.` },
+        get reward() { return `L3 challenges are stronger based on multiverses.` },
+        effect: [()=>player.mlt.times.add(10).log10().sqrt(),x=>formatPercent(x.sub(1))+' stronger'],
+        condition: ()=>{
+            for (let x = 1; x <= CHALLENGES_MAP[3].length; x++) if (player.chal.completions['3-'+x].lt(100)) return false;
+            return true
+        },
+    },
+    76: {
+        title: `Bro is disconnected from reality`,
+        get description() { return `Reach <b>Rank ${format(1e6,0)}</b>.` },
+        condition: ()=>player.ranks[0].gte(1e6),
     },
 }
 

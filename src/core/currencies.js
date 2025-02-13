@@ -13,7 +13,7 @@ export const CURRENCIES = {
 
             if (hasAchievement(13)) x = x.mul(3);
 
-            x = x.pow(temp.mlt_effect[0]).pow(rankEffect(0,10)).pow(challengeEffect('1-3'))
+            x = x.pow(temp.mlt_effect[0]).pow(rankEffect(0,10)).pow(challengeEffect('1-3')).pow(upgradeEffect('exm2')).pow(temp.bh_effect[3])
             if (player.ranks[1].gte(2)) x = x.pow(1.15);
             if (insideChallenge('1-3')) x = x.pow(insideChallenge('3-3') ? .01 : .1);
 
@@ -90,7 +90,7 @@ export const CURRENCIES = {
 
             let x = DC.D1.mul(upgradeEffect('bh1')).mul(temp.bh_effect[1]).mul(temp.abh_effect[0]).mul(simpleUpgradeEffect('r10'))
 
-            x = x.pow(simpleUpgradeBoost('mlt10',temp.mlt_effect[0])).pow(challengeEffect('2-4'))
+            x = x.pow(simpleUpgradeBoost('mlt10',temp.mlt_effect[0])).pow(challengeEffect('2-4')).pow(simpleUpgradeBoost('exm4',upgradeEffect('exm2')))
             if (insideChallenge('2-4')) x = x.pow(insideChallenge('3-3') ? .01 : .1);
 
             if (insideChallenge('3-1')) x = expPow(x,.5);
@@ -151,9 +151,33 @@ export const CURRENCIES = {
         get gain() {
             if (!player.mlt.broken) return DC.D0;
 
-            let m = player.mlt.times.sub(17).max(0).mul(challengeEffect('3-5')).add(1)
+            let m = player.mlt.times.sub(17).max(0).mul(simpleAchievementEffect(74)).mul(challengeEffect('3-5')).add(1)
 
             let x = m.pow(0.75).pow_base(m).max(1).mul(upgradeEffect('bmlt1')).mul(simpleUpgradeEffect('bmlt7'))
+
+            return x
+        },
+    },
+    'ex-mass': {
+        name: "Ex-Mass",
+        costName: "of ex-mass",
+
+        get amount() { return player.exmass },
+        set amount(v) { player.exmass = v.max(0) },
+
+        get mass_exp() { return Decimal.add(1,upgradeEffect('exm3',0)) },
+        get rank_exp() { return Decimal.add(1,prestigeEffect(0,6)) },
+    
+        get gain() {
+            if (player.mlt.times.lt(50)) return DC.D0;
+
+            let x = player.mass.max(1).log10().div(1e30).max(1).pow(this.mass_exp)
+
+            if (player.prestiges[1].gte(1)) x = x.mul(player.ranks.reduce((a,b) => a.mul(b.add(1)),DC.D1).div(1e9).max(1).pow(this.rank_exp));
+            
+            x = x.mul(upgradeEffect('exm1')).mul(prestigeEffect(0,2))
+
+            // if (x.lt(1)) return DC.D0;
 
             return x
         },

@@ -34,6 +34,10 @@ export const MULTIVERSE = {
         [20, `Unlock the fourth Rank called <b>Pent</b> (can be automated). The L1 challenge completions will be set to the best. <i class="small-text">(It triggers if you exit any challenge. They're also kept on reset unless you enter any challenges)</i>`],
         [24, `The L1 challenges can be completed automatically outside, <b>not exceeding the best</b>.`],
         [31, `Unlock the third layer of <b>Challenge</b>. Automate the multiverse upgrades without spending any resources.`],
+        [50, `Unlock the <b>Ex-Mass</b>.`],
+        [60, `The L2 challenge completions will be set to the best.`],
+        [84, `Reduce the <b>Prestige</b> requirement slightly.`],
+        [100, `Unlock the next reset layer.<br><i class="small-text">(Not yet implemented...)</i>`],
     ],
 
     break: {
@@ -48,7 +52,7 @@ export const MULTIVERSE = {
         get effect() {
             let e = player.mlt.total_fragments, x = []
     
-            x[0] = e.add(1).log10().mul(.15).add(1).root(3)
+            x[0] = e.add(1).log10().mul(.15).add(1).root(player.prestiges[1].gte(3) ? 2.5 : 3)
     
             return x
         },
@@ -259,7 +263,7 @@ export const MLT_UPGRADES = {
         cost: a => a.sumBase(1.01).pow_base(3.5).mul(10),
         bulk: a => a.div(10).log(3.5).sumBase(1.01,true).floor().add(1),
 
-        get strength() { return 1 },
+        get strength() { return simpleUpgradeEffect('bmlt11') },
         get base() {
             let b = Decimal.mul(2,challengeEffect('3-1'))
             return b
@@ -278,7 +282,7 @@ export const MLT_UPGRADES = {
         cost: a => a.sumBase(1.1).pow_base(6).mul(100),
         bulk: a => a.div(100).log(6).sumBase(1.1,true).floor().add(1),
 
-        get strength() { return 1 },
+        get strength() { return simpleUpgradeEffect('bmlt11') },
         get base() {
             let b = 0.05
             return b
@@ -297,7 +301,7 @@ export const MLT_UPGRADES = {
         cost: a => a.sumBase(1.01).pow_base(4).mul(1e3),
         bulk: a => a.div(1e3).log(4).sumBase(1.01,true).floor().add(1),
 
-        get strength() { return 1 },
+        get strength() { return simpleUpgradeEffect('bmlt11') },
         get base() {
             let b = player.mlt.total_fragments.add(10).log10().root(2).add(1)
             return b
@@ -395,6 +399,21 @@ export const MLT_UPGRADES = {
 
         curr: "mlt-fragments",
         cost: a => E(1e30),
+    },
+    'bmlt11': {
+        max: 1,
+
+        unl: ()=>player.mlt.broken && player.prestiges[1].gte(3),
+        get description() { return `The <b>bmlt1-3</b> upgrades are stronger based on multiverses.` },
+
+        curr: "mlt-fragments",
+        cost: a => E('e500'),
+
+        effect(a) {
+            let x = player.mlt.times.add(10).log10().root(4)
+            return x
+        },
+        effDesc: x => formatPercent(x.sub(1)) + " stronger",
     },
 }
 

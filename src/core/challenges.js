@@ -205,7 +205,7 @@ export const CHALLENGES = {
         goal: a => a.pow_base(1.5).mul(1e5).pow10().mul(1.5e56),
         bulk: a => a.div(1.5e56).log10().div(1e5).log(1.5).add(1).floor(),
 
-        get strength() { return simpleAchievementEffect(65) },
+        get strength() { return Decimal.mul(simpleAchievementEffect(65),simpleAchievementEffect(75)) },
         effect(c) {
             let x = c.mul(.3).add(1).root(3)
             return x
@@ -224,7 +224,7 @@ export const CHALLENGES = {
         goal: a => a.pow_base(1.5).mul(1e6).pow10().mul(1.5e56),
         bulk: a => a.div(1.5e56).log10().div(1e6).log(1.5).add(1).floor(),
 
-        get strength() { return simpleAchievementEffect(65) },
+        get strength() { return Decimal.mul(simpleAchievementEffect(65),simpleAchievementEffect(75)) },
         effect(c) {
             let x = c.mul(.3).add(1).root(3)
             return x
@@ -243,7 +243,7 @@ export const CHALLENGES = {
         goal: a => a.pow_base(1.5).mul(1e7).pow10().mul(1.5e56),
         bulk: a => a.div(1.5e56).log10().div(1e7).log(1.5).add(1).floor(),
 
-        get strength() { return simpleAchievementEffect(65) },
+        get strength() { return Decimal.mul(simpleAchievementEffect(65),simpleAchievementEffect(75)) },
         effect(c) {
             let x = c.mul(.3).add(1).root(3)
             return x
@@ -262,7 +262,7 @@ export const CHALLENGES = {
         goal: a => a.pow_base(1.5).mul(1e6).pow10().mul(1.5e56),
         bulk: a => a.div(1.5e56).log10().div(1e6).log(1.5).add(1).floor(),
 
-        get strength() { return simpleAchievementEffect(65) },
+        get strength() { return Decimal.mul(simpleAchievementEffect(65),simpleAchievementEffect(75)) },
         effect(c) {
             if (c.eq(0)) return DC.D0;
             let x = c.add(2).slog(2).pow(3).sub(1).div(500)
@@ -282,7 +282,7 @@ export const CHALLENGES = {
         goal: a => a.pow_base(1.5).mul(1e6).pow10().mul(1.5e56),
         bulk: a => a.div(1.5e56).log10().div(1e6).log(1.5).add(1).floor(),
 
-        get strength() { return simpleAchievementEffect(65) },
+        get strength() { return Decimal.mul(simpleAchievementEffect(65),simpleAchievementEffect(75)) },
         effect(c) {
             let x = c.mul(0.3).add(1).root(3)
             return x
@@ -301,7 +301,7 @@ export const CHALLENGES = {
         goal: a => a.pow_base(1.5).mul(1e10).pow10().mul(1.5e56),
         bulk: a => a.div(1.5e56).log10().div(1e10).log(1.5).add(1).floor(),
 
-        get strength() { return simpleAchievementEffect(65) },
+        get strength() { return Decimal.mul(simpleAchievementEffect(65),simpleAchievementEffect(75)) },
         effect(c) {
             let x = c.div(15).add(1).root(3)
             return x
@@ -337,6 +337,7 @@ export const CHALLENGE_LAYERS = CHALLENGES_MAP.length-1
 export const SET_BEST_CHAL = [
     null,
     () => player.mlt.times.gte(20),
+    () => player.mlt.times.gte(60),
 ]
 export const AUTO_CHAL = [
     null,
