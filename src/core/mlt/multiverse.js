@@ -15,7 +15,7 @@ export const MULTIVERSE = {
     get effect() {
         let e = player.mlt.total_energy, x = []
 
-        x[0] = e.add(10).log10().root(2).sub(1).div(10).add(1).pow(temp.break_mlt_effect[0])
+        x[0] = e.add(10).log10().root(1.5).sub(1).div(5).add(1000).pow(temp.break_mlt_effect[0])
 
         return x
     },
